@@ -1,0 +1,2 @@
+Compilation: premake4 gmake, then call make, test on Virtual Machine.
+Manual: I retrive the initial width and height of the window(768.0f), and use it as a constant, so please don't resize the window, otherwise viewport's behavior will be unknown.

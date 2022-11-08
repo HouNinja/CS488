@@ -1,0 +1,10 @@
+Compilation:
+Three commands:
+1. premake4 gmake
+2. make
+3. ./A3 Assets/puppet.lua or a3mark.lua
+
+Manual:
+1. I failed to accomplish undo/redo functionality in the program, Thus, I didn't make coppresponding User Interface.
+
+2. When testers tried to rotate head around z-axis, the program identify joint node related to head by its name(neck_head_joint in my puppets). For different puppets, such action might be invalid since the name given might differ.
