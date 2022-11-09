@@ -2,7 +2,19 @@
 
 #include <glm/ext.hpp>
 
+using namespace glm;
+
 #include "A4.hpp"
+
+vec3 trace_ray(
+	Ray * ray,
+	SceneNode * root,
+	const glm::vec3 & eye,
+	const glm::vec3 & ambient,
+	const std::list<Light *> & lights
+) {
+	return vec3(0.0f, 0.0f, 0.0f);
+}
 
 void A4_Render(
 		// What to render  
@@ -43,12 +55,19 @@ void A4_Render(
 	size_t h = image.height();
 	size_t w = image.width();
 
-	for (uint y = 0; y < h; ++y) {
+	vec3 unit_z = normalize(view);
+	vec3 unit_x = normalize(cross(view, up));
+	vec3 unit_y = normalize(cross(unit_z, unit_x));
+	float distance = h / 2 / glm::tan(glm::radians(fovy / 2));
+	vec3 Top_Left_corner = distance * unit_z - unit_x * (float)w / 2 - unit_y * (float)h / 2;
+
+ 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
+			vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			// Red: 
 			image(x, y, 0) = (double)1.0;
 			// Green: 
-			image(x, y, 1) = (double)1.0;
+			image(x, y, 1) = (double)0.0;
 			// Blue: 
 			image(x, y, 2) = (double)1.0;
 		}

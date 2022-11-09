@@ -7,6 +7,15 @@
 #include "SceneNode.hpp"
 #include "Light.hpp"
 #include "Image.hpp"
+#include "Ray.hpp"
+
+glm::vec3 trace_ray(
+	Ray * ray,
+	SceneNode * root,
+	const glm::vec3 & eye,  
+	const glm::vec3 & ambient,
+	const std::list<Light *> & lights
+);
 
 void A4_Render(
 		// What to render
