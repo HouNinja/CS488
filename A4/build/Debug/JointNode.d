@@ -73,7 +73,8 @@ Debug/JointNode.o: ../JointNode.cpp ../JointNode.hpp ../SceneNode.hpp \
  ../../shared/include/glm/vector_relational.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
- ../../shared/include/glm/detail/func_integer.inl
+ ../../shared/include/glm/detail/func_integer.inl ../Ray.hpp ../Light.hpp \
+ ../Image.hpp ../Intersection.hpp
 
 ../JointNode.hpp:
 
@@ -230,3 +231,11 @@ Debug/JointNode.o: ../JointNode.cpp ../JointNode.hpp ../SceneNode.hpp \
 ../../shared/include/glm/detail/func_integer.hpp:
 
 ../../shared/include/glm/detail/func_integer.inl:
+
+../Ray.hpp:
+
+../Light.hpp:
+
+../Image.hpp:
+
+../Intersection.hpp:

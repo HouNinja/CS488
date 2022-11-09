@@ -215,7 +215,7 @@ Debug/A4.o: ../A4.cpp ../../shared/include/glm/ext.hpp \
  ../../shared/include/glm/./gtx/../detail/intrinsic_matrix.hpp \
  ../../shared/include/glm/./gtx/../detail/intrinsic_matrix.inl \
  ../../shared/include/glm/./gtx/simd_mat4.inl ../A4.hpp ../SceneNode.hpp \
- ../Material.hpp ../Light.hpp ../Image.hpp ../Ray.hpp
+ ../Material.hpp ../Ray.hpp ../Light.hpp ../Image.hpp ../Intersection.hpp
 
 ../../shared/include/glm/ext.hpp:
 
@@ -657,8 +657,10 @@ Debug/A4.o: ../A4.cpp ../../shared/include/glm/ext.hpp \
 
 ../Material.hpp:
 
+../Ray.hpp:
+
 ../Light.hpp:
 
 ../Image.hpp:
 
-../Ray.hpp:
+../Intersection.hpp:

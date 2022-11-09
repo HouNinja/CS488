@@ -76,8 +76,9 @@ OBJECTS := \
 	$(OBJDIR)/Material.o \
 	$(OBJDIR)/PhongMaterial.o \
 	$(OBJDIR)/JointNode.o \
+	$(OBJDIR)/Ray.o \
 	$(OBJDIR)/SceneNode.o \
-
+	
 RESOURCES := \
 
 SHELLTYPE := msdos
@@ -144,6 +145,9 @@ $(OBJDIR)/polyroots.o: ../polyroots.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/GeometryNode.o: ../GeometryNode.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/Ray.o: ../Ray.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/Image.o: ../Image.cpp

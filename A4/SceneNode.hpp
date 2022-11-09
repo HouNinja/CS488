@@ -10,6 +10,9 @@
 #include <string>
 #include <iostream>
 
+#include "Ray.hpp"
+#include "Intersection.hpp"
+
 enum class NodeType {
 	SceneNode,
 	GeometryNode,
@@ -42,6 +45,7 @@ public:
 
 
 	friend std::ostream & operator << (std::ostream & os, const SceneNode & node);
+    virtual bool hit(Ray ray, Intersection & intersection, float & ray_length);
 
     // Transformations
     glm::mat4 trans;
@@ -57,3 +61,5 @@ private:
 	// The number of SceneNode instances.
 	static unsigned int nodeInstanceCount;
 };
+
+

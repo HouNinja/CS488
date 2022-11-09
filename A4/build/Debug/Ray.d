@@ -1,8 +1,4 @@
-Debug/scene_lua.o: ../scene_lua.cpp ../scene_lua.hpp ../lua488.hpp \
- ../../shared/lua-5.3.1/src/lua.h ../../shared/lua-5.3.1/src/luaconf.h \
- ../../shared/lua-5.3.1/src/lualib.h ../../shared/lua-5.3.1/src/lua.h \
- ../../shared/lua-5.3.1/src/lauxlib.h ../Light.hpp \
- ../../shared/include/glm/glm.hpp \
+Debug/Ray.o: ../Ray.cpp ../Ray.hpp ../../shared/include/glm/glm.hpp \
  ../../shared/include/glm/detail/_fixes.hpp \
  ../../shared/include/glm/fwd.hpp \
  ../../shared/include/glm/detail/type_int.hpp \
@@ -76,26 +72,10 @@ Debug/scene_lua.o: ../scene_lua.cpp ../scene_lua.hpp ../lua488.hpp \
  ../../shared/include/glm/vector_relational.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
- ../../shared/include/glm/detail/func_integer.inl ../Mesh.hpp \
- ../Primitive.hpp ../GeometryNode.hpp ../SceneNode.hpp ../Material.hpp \
- ../Ray.hpp ../Image.hpp ../Intersection.hpp ../JointNode.hpp \
- ../PhongMaterial.hpp ../A4.hpp
+ ../../shared/include/glm/detail/func_integer.inl ../Light.hpp \
+ ../Image.hpp
 
-../scene_lua.hpp:
-
-../lua488.hpp:
-
-../../shared/lua-5.3.1/src/lua.h:
-
-../../shared/lua-5.3.1/src/luaconf.h:
-
-../../shared/lua-5.3.1/src/lualib.h:
-
-../../shared/lua-5.3.1/src/lua.h:
-
-../../shared/lua-5.3.1/src/lauxlib.h:
-
-../Light.hpp:
+../Ray.hpp:
 
 ../../shared/include/glm/glm.hpp:
 
@@ -247,24 +227,6 @@ Debug/scene_lua.o: ../scene_lua.cpp ../scene_lua.hpp ../lua488.hpp \
 
 ../../shared/include/glm/detail/func_integer.inl:
 
-../Mesh.hpp:
-
-../Primitive.hpp:
-
-../GeometryNode.hpp:
-
-../SceneNode.hpp:
-
-../Material.hpp:
-
-../Ray.hpp:
+../Light.hpp:
 
 ../Image.hpp:
-
-../Intersection.hpp:
-
-../JointNode.hpp:
-
-../PhongMaterial.hpp:
-
-../A4.hpp:

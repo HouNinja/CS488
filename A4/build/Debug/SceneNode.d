@@ -73,7 +73,8 @@ Debug/SceneNode.o: ../SceneNode.cpp ../SceneNode.hpp ../Material.hpp \
  ../../shared/include/glm/vector_relational.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
- ../../shared/include/glm/detail/func_integer.inl \
+ ../../shared/include/glm/detail/func_integer.inl ../Ray.hpp ../Light.hpp \
+ ../Image.hpp ../Intersection.hpp \
  ../../shared/cs488-framework/MathUtils.hpp \
  ../../shared/include/glm/ext.hpp \
  ../../shared/include/glm/./gtc/bitfield.hpp \
@@ -371,6 +372,14 @@ Debug/SceneNode.o: ../SceneNode.cpp ../SceneNode.hpp ../Material.hpp \
 ../../shared/include/glm/detail/func_integer.hpp:
 
 ../../shared/include/glm/detail/func_integer.inl:
+
+../Ray.hpp:
+
+../Light.hpp:
+
+../Image.hpp:
+
+../Intersection.hpp:
 
 ../../shared/cs488-framework/MathUtils.hpp:
 

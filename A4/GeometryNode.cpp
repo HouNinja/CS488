@@ -1,6 +1,11 @@
 // Termm--Fall 2022
 
 #include "GeometryNode.hpp"
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp>
+
+using namespace glm;
 
 //---------------------------------------------------------------------------------------
 GeometryNode::GeometryNode(
@@ -26,4 +31,20 @@ void GeometryNode::setMaterial( Material *mat )
 	//     crash the program.
 
 	m_material = mat;
+}
+
+bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_length) {
+	Ray temp_ray;
+	temp_ray.Set_origin(vec3(invtrans * vec4(ray.Get_origin(), 1.0f)));
+	temp_ray.Set_direction(vec3(invtrans * vec4(ray.Get_direction(), 0.0f)));
+	float min_length = ray_length;
+	Intersection temp_intersection;
+	for (SceneNode *child : children) {
+		if (child->hit(temp_ray, temp_intersection, ray_length) && min_length > ray_length) {
+			intersection = temp_intersection;
+			return true;
+		}
+	}
+	return false;
+	return false;
 }
