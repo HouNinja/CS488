@@ -4,7 +4,7 @@
 #include "polyroots.hpp"
 #include "Intersection.hpp"
 #include <glm/glm.hpp>
-
+#include <iostream>
 using namespace glm;
 
 Primitive::~Primitive() {}
@@ -53,6 +53,88 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
 
 NonhierBox::~NonhierBox() {}
 
-bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
+//make sure that such triangle exist!
+bool Ray_Triangle_Intersection(Ray ray, Intersection & intersection, float & t_max, 
+vec3 vertex1, vec3 vertex2, vec3 vertex3) {
+    const float EPSILON = 0.0000001;
+    vec3 edge1 = vertex2 - vertex1;
+    vec3 edge2 = vertex3 - vertex1;
+    vec3 normal = cross(edge1, edge2);
+    float a = dot(ray.Get_direction(), normal);
+    if (a > dot(ray.Get_direction(), -normal)) { normal = -normal;}
+
+    if (a < EPSILON && a > -EPSILON) {
+        //if a == 0, then the ray is horizontal to the plane, Epsilon eliminate the horizontal rays
+        return false;
+    }
+
+    float t = (dot(ray.Get_origin(), normal) - dot(vertex1, normal)) / a;
+    if ( t > t_max ) {
+        return false;
+    }
+    vec3 HitPoint = ray.Get_origin() + t * ray.Get_direction();
+    //implement bycentric coordinates: P - A = beta * (B - A) + gamma * ( C - A )
+    vec3 P_A = HitPoint - vertex1;
+    vec3 B_A = vertex2 - vertex1;
+    vec3 C_A = vertex3 - vertex1;
+    float beta = (P_A.x * C_A.y - P_A.y * C_A.x) * 100000 / (100000 * (B_A.x * C_A.y - B_A.y * C_A.x));
+    float gamma = (P_A.x * B_A.y - P_A.y * B_A.x) * 100000 / (100000 * (B_A.y * C_A.x - B_A.x * C_A.y));
+    if ( beta + gamma <= 1 && beta + gamma >= 0 ) {
+        intersection.hit_point = HitPoint;
+        intersection.normal = normal;
+        return true;
+    }
     return false;
+}
+
+bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
+    vec3 vertex1 = m_pos + vec3(-m_size / 2, m_size / 2, m_size / 2);
+    vec3 vertex2 = m_pos + vec3(-m_size / 2, m_size / 2, -m_size / 2);
+    vec3 vertex3 = m_pos + vec3(m_size / 2, m_size / 2, -m_size / 2);
+    vec3 vertex4 = m_pos + vec3(m_size / 2, m_size / 2, m_size / 2);
+    vec3 vertex5 = m_pos + vec3(-m_size / 2, -m_size / 2, m_size / 2);
+    vec3 vertex6 = m_pos + vec3(-m_size / 2, -m_size / 2, -m_size / 2);
+    vec3 vertex7 = m_pos + vec3(m_size / 2, -m_size / 2, -m_size / 2);
+    vec3 vertex8 = m_pos + vec3(m_size / 2, -m_size / 2, m_size / 2);
+    bool result = false;
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex4)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex3, vertex4)) {
+        result =  true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex6)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex6)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex6, vertex7)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex3, vertex7)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex4, vertex8)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex8)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex8, vertex4, vertex7)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex5, vertex6, vertex8)) {
+        result = true;
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex6, vertex7, vertex8)) {
+        result = true;
+    }
+    if (result) {
+        std::cout << "reach here" << std::endl;
+    }
+    return result;
 }
