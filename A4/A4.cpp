@@ -26,34 +26,41 @@ vec3 trace_ray(
 		double shininess = material->Get_shininess();
 		// Ambient light for all hits.
 		final_color += ambient * kd;
-
+		//std::cout << kd.x << " kd" << kd.y << " " << kd.z << std::endl;
 		for (Light * light : lights) {
 			//could potentially generate error here
-			Ray lightray(light->position, intersection.hit_point - light->position);
+			Ray lightray(intersection.hit_point, light->position - intersection.hit_point);
 			Intersection light_intersection;
-			float max_t = 1.0f - 0.0001f;
+			float max_t = std::numeric_limits<float>::max();
 			if ( root->hit(lightray, light_intersection, max_t) ) {
-				// if t < 1, then light is blocked by something before reaching intersection hit point.
+				// if intersect, then there's something blocking the ray from hitpoint to light source
+				std::cout << max_t << std::endl;
 				continue;
 			}
 
 			double r = length(lightray.Get_direction());
 			double attenuation = 1.0 / (light->falloff[0] + light->falloff[1] * r + light->falloff[2] * r * r);
 
-			vec3 L = normalize(-lightray.Get_direction());
+			vec3 L = normalize(lightray.Get_direction());
 			vec3 N = normalize(intersection.normal);
 			vec3 R = normalize(2 * dot(L, N) * N - L);
 			vec3 V = normalize(eye - intersection.hit_point);
 
 			//diffuse
+			vec3 temp = attenuation * dot(L, N) * kd * light->colour;
+			//std::cout << temp.x << " " << temp.y << " " << temp.z << std::endl;
 			final_color += attenuation * dot(L, N) * kd * light->colour;
 			//specular
 			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * light->colour;
 
 		}
-		return final_color;
+	} else {
+		vec3 unit = normalize(ray.Get_direction());
+		final_color += unit.x * vec3(0.3,0.3,0.9) + (1 - unit.x) * vec3 (0.6, 0.6, 0.6);
+		final_color += unit.y * vec3(0.3,0.3,0.9) + (1 - unit.y) * vec3 (0.6, 0.6, 0.6);
+		final_color /= 2;
 	}
-	return vec3(0.0f, 0.0f, 0.0f);
+	return final_color;
 }
 
 void A4_Render(

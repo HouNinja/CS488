@@ -40,8 +40,9 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
         new_t = roots[0];
     } else {
         new_t = std::min(roots[0], roots[1]);
+
     }
-    if ( new_t < ray_length ) {
+    if ( new_t < ray_length && new_t > 0) {
         ray_length = new_t;
         intersection.hit_point = ray.Get_origin() + new_t * ray.Get_direction();
         intersection.normal = intersection.hit_point - m_pos;
@@ -87,8 +88,7 @@ bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, fl
 }
 
 //make sure that such triangle exist!
-bool Ray_Triangle_Intersection(Ray ray, Intersection & intersection, float & t_max, 
-vec3 vertex1, vec3 vertex2, vec3 vertex3) {
+bool trangleIntersection2(Ray ray, vec3 vertex1, vec3 vertex2, vec3 vertex3, float & t_max) {
     const float EPSILON = 0.0000001;
     vec3 edge1 = vertex2 - vertex1;
     vec3 edge2 = vertex3 - vertex1;
@@ -114,67 +114,29 @@ vec3 vertex1, vec3 vertex2, vec3 vertex3) {
     float gamma = (P_A.x * B_A.y - P_A.y * B_A.x) * 100000 / (100000 * (B_A.y * C_A.x - B_A.x * C_A.y));
     if ( beta + gamma <= 1 && beta + gamma >= 0 ) {
         t_max = t;
-        intersection.hit_point = HitPoint;
-        intersection.normal = normal;
         return true;
     }
     return false;
 }
 
 vec3 real_normal(vec3 direction, vec3 prev_normal) {
-    if (dot(direction, prev_normal) > dot(direction, -prev_normal)) {
+    if (dot(direction, prev_normal) > 0 ) {
         return -prev_normal;
     }
     return prev_normal;
 }
 bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
-    return false;
-    vec3 vertex1 = m_pos + vec3(-m_size/ 2, m_size/2, m_size/2);
-    vec3 vertex2 = m_pos + vec3(-m_size / 2, m_size / 2, -m_size / 2);
-    vec3 vertex3 = m_pos + vec3(m_size / 2, m_size / 2, -m_size / 2);
-    vec3 vertex4 = m_pos + vec3(m_size / 2, m_size / 2, m_size / 2);
-    vec3 vertex5 = m_pos + vec3(-m_size / 2, -m_size / 2, m_size / 2);
-    vec3 vertex6 = m_pos + vec3(-m_size / 2, -m_size / 2, -m_size / 2);
-    vec3 vertex7 = m_pos + vec3(m_size / 2, -m_size / 2, -m_size / 2);
-    vec3 vertex8 = m_pos + vec3(m_size / 2, -m_size / 2, m_size / 2);
+    vec3 vertex1 = m_pos + vec3(0, m_size, m_size);
+    vec3 vertex2 = m_pos + vec3(0, m_size, 0);
+    vec3 vertex3 = m_pos + vec3(m_size, m_size, 0);
+    vec3 vertex4 = m_pos + vec3(m_size, m_size, m_size);
+    vec3 vertex5 = m_pos + vec3(0, 0, m_size);
+    vec3 vertex6 = m_pos + vec3(0, 0, 0);
+    vec3 vertex7 = m_pos + vec3(m_size, 0, 0);
+    vec3 vertex8 = m_pos + vec3(m_size, 0, m_size);
     bool result = false;
-    /*if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex4)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex3, vertex4)) {
-        result =  true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex6)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex6)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex6, vertex7)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex3, vertex7)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex4, vertex8)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex8)) {
-        
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex8, vertex4, vertex7)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex5, vertex6, vertex8)) {
-        result = true;
-    }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex6, vertex7, vertex8)) {
-        result = true;
-    }*/
-    if ( triangleIntersection(ray, vertex1, vertex2, vertex4, ray_length) ) {
+   
+    /*if ( triangleIntersection(ray, vertex1, vertex2, vertex4, ray_length) ) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
         vec3 prev_normal = cross(vertex2 - vertex1, vertex4 - vertex1);
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
@@ -216,12 +178,7 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
         result = true;
     }
-    if ( triangleIntersection(ray, vertex1, vertex5, vertex8, ray_length) ) {
-        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
-        vec3 prev_normal = cross(vertex5 - vertex1, vertex8 - vertex1);
-        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
-        result = true;
-    }
+    
     if ( triangleIntersection(ray, vertex3, vertex4, vertex7, ray_length) ) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
         vec3 prev_normal = cross(vertex4 - vertex3, vertex7 - vertex3);
@@ -244,6 +201,13 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
         vec3 prev_normal = cross(vertex8 - vertex6, vertex8 - vertex7);
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }*/
+    if ( triangleIntersection(ray, vertex1, vertex5, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex5 - vertex1, vertex8 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        //std::cout << intersection.normal.x << " " << intersection.normal.y << " " << intersection.normal.z <<std::endl;
         result = true;
     }
     if (result) {

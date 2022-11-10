@@ -7,21 +7,9 @@ mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25)
 
 scene_root = gr.node('root')
 
-
-s3 = gr.nh_sphere('s3', {0, -1200, -500}, 1000)
-scene_root:add_child(s3)
-s3:set_material(mat2)
-
 b1 = gr.nh_box('b1', {-200, -225, 100}, 100)
 scene_root:add_child(b1)
 b1:set_material(mat4)
-
-
-
-
-
--- s4 = gr.nh_sphere('s4', {-100, 25, -300}, 50)
-
 
 -- A small stellated dodecahedron.
 
