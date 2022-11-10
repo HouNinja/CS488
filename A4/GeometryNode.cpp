@@ -46,7 +46,6 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 			hit_child = true;
 		}
 	}*/
-
 	if ( m_primitive->hit(temp_ray, intersection, ray_t) ) {
 		intersection.normal = vec3(trans * vec4(intersection.normal, 0.0f));
 		intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));

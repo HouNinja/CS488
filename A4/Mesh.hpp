@@ -32,10 +32,9 @@ struct Triangle
 class Mesh : public Primitive {
 public:
   Mesh( const std::string& fname );
-  
+  bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
 private:
 	std::vector<glm::vec3> m_vertices;
 	std::vector<Triangle> m_faces;
-
     friend std::ostream& operator<<(std::ostream& out, const Mesh& mesh);
 };

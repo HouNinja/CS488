@@ -14,7 +14,8 @@ vec3 trace_ray(
 	SceneNode * root,
 	const glm::vec3 & eye,
 	const glm::vec3 & ambient,
-	const std::list<Light *> & lights
+	const std::list<Light *> & lights,
+	int n_hits
 ) {
 	Intersection intersection;
 	float max = std::numeric_limits<float>::max();
@@ -52,6 +53,14 @@ vec3 trace_ray(
 			final_color += attenuation * dot(L, N) * kd * light->colour;
 			//specular
 			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * light->colour;
+
+			//Code for mirrow reflection:
+			if ( n_hits > 0 ) {
+				vec3 reflected_direction = normalize(2 * dot(V,N) * N - V);
+				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
+				float cofr = 0.15;
+				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) * cofr;
+			}
 
 		}
 	} else {
@@ -113,7 +122,7 @@ void A4_Render(
 		for (uint x = 0; x < w; ++x) {
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
-			vec3 color = trace_ray(ray, root, eye, ambient, lights);
+			vec3 color = trace_ray(ray, root, eye, ambient, lights, 1);
 			// Red: 
 			image(x, y, 0) = (double)color.r;
 			// Green: 

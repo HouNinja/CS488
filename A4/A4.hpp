@@ -14,7 +14,8 @@ glm::vec3 trace_ray(
 	SceneNode * root,
 	const glm::vec3 & eye,  
 	const glm::vec3 & ambient,
-	const std::list<Light *> & lights
+	const std::list<Light *> & lights,
+	int n_hits
 );
 
 void A4_Render(
