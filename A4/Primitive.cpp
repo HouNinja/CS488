@@ -121,8 +121,15 @@ vec3 vertex1, vec3 vertex2, vec3 vertex3) {
     return false;
 }
 
+vec3 real_normal(vec3 direction, vec3 prev_normal) {
+    if (dot(direction, prev_normal) > dot(direction, -prev_normal)) {
+        return -prev_normal;
+    }
+    return prev_normal;
+}
 bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
-    vec3 vertex1 = m_pos + vec3(-m_size / 2, m_size / 2, m_size / 2);
+    return false;
+    vec3 vertex1 = m_pos + vec3(-m_size/ 2, m_size/2, m_size/2);
     vec3 vertex2 = m_pos + vec3(-m_size / 2, m_size / 2, -m_size / 2);
     vec3 vertex3 = m_pos + vec3(m_size / 2, m_size / 2, -m_size / 2);
     vec3 vertex4 = m_pos + vec3(m_size / 2, m_size / 2, m_size / 2);
@@ -151,11 +158,11 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex4, vertex8)) {
         result = true;
-    }*/
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex8)) {
-        result = true;
     }
-    /*if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex8)) {
+        
+    }
+    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
         result = true;
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex8, vertex4, vertex7)) {
@@ -167,6 +174,78 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex6, vertex7, vertex8)) {
         result = true;
     }*/
+    if ( triangleIntersection(ray, vertex1, vertex2, vertex4, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex2 - vertex1, vertex4 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex2, vertex3, vertex4, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex3 - vertex2, vertex4 - vertex2);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex1, vertex2, vertex6, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex2 - vertex1, vertex6 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex1, vertex5, vertex6, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex5 - vertex1, vertex6 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex2, vertex6, vertex7, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex6 - vertex2, vertex7 - vertex2);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex2, vertex3, vertex7, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex3 - vertex2, vertex7 - vertex2);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex1, vertex4, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex4 - vertex1, vertex8 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex1, vertex5, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex5 - vertex1, vertex8 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex3, vertex4, vertex7, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex4 - vertex3, vertex7 - vertex3);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex8, vertex4, vertex7, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex4 - vertex8, vertex7 - vertex4);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex5, vertex6, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex8 - vertex5, vertex8 - vertex6);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+    if ( triangleIntersection(ray, vertex6, vertex7, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex8 - vertex6, vertex8 - vertex7);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
     if (result) {
         //std::cout << "cube hit" << std::endl;
     }

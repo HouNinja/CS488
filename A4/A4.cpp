@@ -18,15 +18,40 @@ vec3 trace_ray(
 ) {
 	Intersection intersection;
 	float max = std::numeric_limits<float>::max();
+	vec3 final_color = vec3(0.0f, 0.0f, 0.0f);
 	if ( root->hit(ray, intersection, max) ) {
 		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
 		vec3 kd = material->Get_kd();
-		if ( kd.r == 0.7 && kd.g == 0.6 ) {
-			std::cout << kd.x << " !!!!!!!!!! " << kd.y << " lskjflskdj" << kd.z << std::endl;
+		vec3 ks = material->Get_ks();
+		double shininess = material->Get_shininess();
+		// Ambient light for all hits.
+		final_color += ambient * kd;
+
+		for (Light * light : lights) {
+			//could potentially generate error here
+			Ray lightray(light->position, intersection.hit_point - light->position);
+			Intersection light_intersection;
+			float max_t = 1.0f - 0.0001f;
+			if ( root->hit(lightray, light_intersection, max_t) ) {
+				// if t < 1, then light is blocked by something before reaching intersection hit point.
+				continue;
+			}
+
+			double r = length(lightray.Get_direction());
+			double attenuation = 1.0 / (light->falloff[0] + light->falloff[1] * r + light->falloff[2] * r * r);
+
+			vec3 L = normalize(-lightray.Get_direction());
+			vec3 N = normalize(intersection.normal);
+			vec3 R = normalize(2 * dot(L, N) * N - L);
+			vec3 V = normalize(eye - intersection.hit_point);
+
+			//diffuse
+			final_color += attenuation * dot(L, N) * kd * light->colour;
+			//specular
+			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * light->colour;
+
 		}
-		if ( material != nullptr) {
-			return material->Get_kd();
-		}
+		return final_color;
 	}
 	return vec3(0.0f, 0.0f, 0.0f);
 }
