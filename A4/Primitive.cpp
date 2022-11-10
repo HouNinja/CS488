@@ -78,7 +78,7 @@ bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, fl
 	// At this stage we can compute t to find out where the intersection point is on the line.
 
 	float t = f * glm::dot(edge2, q);
-	if (t > EPSILON) // ray intersection
+	if (t > EPSILON && t < res) // ray intersection
 	{
 		res = t;
 		return true;
@@ -88,7 +88,7 @@ bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, fl
 }
 
 //make sure that such triangle exist!
-bool trangleIntersection2(Ray ray, vec3 vertex1, vec3 vertex2, vec3 vertex3, float & t_max) {
+bool triangleIntersection2(Ray &ray, vec3 vertex1, vec3 vertex2, vec3 vertex3, float & t_max) {
     const float EPSILON = 0.0000001;
     vec3 edge1 = vertex2 - vertex1;
     vec3 edge2 = vertex3 - vertex1;
@@ -101,8 +101,8 @@ bool trangleIntersection2(Ray ray, vec3 vertex1, vec3 vertex2, vec3 vertex3, flo
         return false;
     }
 
-    float t = (dot(ray.Get_origin(), normal) - dot(vertex1, normal)) / a;
-    if ( t > t_max ) {
+    float t = (dot(vertex1, normal) - dot(ray.Get_origin(), normal)) / a;
+    if ( t > t_max || t < EPSILON) {
         return false;
     }
     vec3 HitPoint = ray.Get_origin() + t * ray.Get_direction();
@@ -112,7 +112,8 @@ bool trangleIntersection2(Ray ray, vec3 vertex1, vec3 vertex2, vec3 vertex3, flo
     vec3 C_A = vertex3 - vertex1;
     float beta = (P_A.x * C_A.y - P_A.y * C_A.x) * 100000 / (100000 * (B_A.x * C_A.y - B_A.y * C_A.x));
     float gamma = (P_A.x * B_A.y - P_A.y * B_A.x) * 100000 / (100000 * (B_A.y * C_A.x - B_A.x * C_A.y));
-    if ( beta + gamma <= 1 && beta + gamma >= 0 ) {
+    std::cout << beta << " " << gamma << std::endl;
+    if ( beta + gamma <= 1 && beta + gamma >= 0 /*&& beta >= 0 && gamma >= 0*/) {
         t_max = t;
         return true;
     }
@@ -135,8 +136,8 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     vec3 vertex7 = m_pos + vec3(m_size, 0, 0);
     vec3 vertex8 = m_pos + vec3(m_size, 0, m_size);
     bool result = false;
-   
-    /*if ( triangleIntersection(ray, vertex1, vertex2, vertex4, ray_length) ) {
+    float temp_length = ray_length;
+    if ( triangleIntersection(ray, vertex1, vertex2, vertex4, ray_length)) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
         vec3 prev_normal = cross(vertex2 - vertex1, vertex4 - vertex1);
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
@@ -172,12 +173,6 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
         result = true;
     }
-    if ( triangleIntersection(ray, vertex1, vertex4, vertex8, ray_length) ) {
-        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
-        vec3 prev_normal = cross(vertex4 - vertex1, vertex8 - vertex1);
-        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
-        result = true;
-    }
     
     if ( triangleIntersection(ray, vertex3, vertex4, vertex7, ray_length) ) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
@@ -202,7 +197,7 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
         vec3 prev_normal = cross(vertex8 - vertex6, vertex8 - vertex7);
         intersection.normal = real_normal(ray.Get_direction(), prev_normal);
         result = true;
-    }*/
+    }
     if ( triangleIntersection(ray, vertex1, vertex5, vertex8, ray_length) ) {
         intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
         vec3 prev_normal = cross(vertex5 - vertex1, vertex8 - vertex1);
@@ -210,6 +205,16 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
         //std::cout << intersection.normal.x << " " << intersection.normal.y << " " << intersection.normal.z <<std::endl;
         result = true;
     }
+
+     if ( triangleIntersection(ray, vertex1, vertex4, vertex8, ray_length) ) {
+        intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
+        vec3 prev_normal = cross(vertex4 - vertex1, vertex8 - vertex1);
+        intersection.normal = real_normal(ray.Get_direction(), prev_normal);
+        result = true;
+    }
+
+    
+
     if (result) {
         //std::cout << "cube hit" << std::endl;
     }

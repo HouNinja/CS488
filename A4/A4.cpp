@@ -34,7 +34,7 @@ vec3 trace_ray(
 			float max_t = std::numeric_limits<float>::max();
 			if ( root->hit(lightray, light_intersection, max_t) ) {
 				// if intersect, then there's something blocking the ray from hitpoint to light source
-				std::cout << max_t << std::endl;
+				//std::cout << max_t << std::endl;
 				continue;
 			}
 
