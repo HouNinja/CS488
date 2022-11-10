@@ -53,6 +53,39 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
 
 NonhierBox::~NonhierBox() {}
 
+
+bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, float &res) {
+	const float EPSILON = 0.0000001;
+	glm::vec3 edge1, edge2, h, s, q;
+	float a, f, u, v;
+	edge1 = vertex1 - vertex0;
+	edge2 = vertex2 - vertex0; 
+
+	h = glm::cross(ray.Get_direction(), edge2);
+	a = glm::dot(edge1, h);
+	if (a > -EPSILON && a < EPSILON)
+		return false;
+	f = 1 / a;
+	s = ray.Get_origin() - vertex0;
+	u = f * (glm::dot(s, h));
+	if (u < 0.0 || u > 1.0)
+		return false;
+	q = glm::cross(s, edge1);
+	v = f * glm::dot(ray.Get_direction(), q);
+	if (v < 0.0 || u + v > 1.0)
+		return false;
+	// At this stage we can compute t to find out where the intersection point is on the line.
+
+	float t = f * glm::dot(edge2, q);
+	if (t > EPSILON) // ray intersection
+	{
+		res = t;
+		return true;
+	}
+	else // This means that there is a line intersection but not a ray intersection.
+    return false;
+}
+
 //make sure that such triangle exist!
 bool Ray_Triangle_Intersection(Ray ray, Intersection & intersection, float & t_max, 
 vec3 vertex1, vec3 vertex2, vec3 vertex3) {
@@ -80,6 +113,7 @@ vec3 vertex1, vec3 vertex2, vec3 vertex3) {
     float beta = (P_A.x * C_A.y - P_A.y * C_A.x) * 100000 / (100000 * (B_A.x * C_A.y - B_A.y * C_A.x));
     float gamma = (P_A.x * B_A.y - P_A.y * B_A.x) * 100000 / (100000 * (B_A.y * C_A.x - B_A.x * C_A.y));
     if ( beta + gamma <= 1 && beta + gamma >= 0 ) {
+        t_max = t;
         intersection.hit_point = HitPoint;
         intersection.normal = normal;
         return true;
@@ -97,7 +131,7 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     vec3 vertex7 = m_pos + vec3(m_size / 2, -m_size / 2, -m_size / 2);
     vec3 vertex8 = m_pos + vec3(m_size / 2, -m_size / 2, m_size / 2);
     bool result = false;
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex4)) {
+    /*if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex2, vertex4)) {
         result = true;
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex2, vertex3, vertex4)) {
@@ -117,11 +151,11 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex4, vertex8)) {
         result = true;
-    }
+    }*/
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex1, vertex5, vertex8)) {
         result = true;
     }
-    if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
+    /*if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex3, vertex4, vertex7)) {
         result = true;
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex8, vertex4, vertex7)) {
@@ -132,9 +166,9 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     }
     if (Ray_Triangle_Intersection(ray, intersection, ray_length, vertex6, vertex7, vertex8)) {
         result = true;
-    }
+    }*/
     if (result) {
-        std::cout << "reach here" << std::endl;
+        //std::cout << "cube hit" << std::endl;
     }
     return result;
 }

@@ -7,6 +7,7 @@ using namespace glm;
 #include "A4.hpp"
 #include "Ray.hpp"
 #include "PhongMaterial.hpp"
+#include <iostream>
 
 vec3 trace_ray(
 	Ray ray,
@@ -19,6 +20,10 @@ vec3 trace_ray(
 	float max = std::numeric_limits<float>::max();
 	if ( root->hit(ray, intersection, max) ) {
 		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
+		vec3 kd = material->Get_kd();
+		if ( kd.r == 0.7 && kd.g == 0.6 ) {
+			std::cout << kd.x << " !!!!!!!!!! " << kd.y << " lskjflskdj" << kd.z << std::endl;
+		}
 		if ( material != nullptr) {
 			return material->Get_kd();
 		}
@@ -69,6 +74,7 @@ void A4_Render(
 	vec3 unit_x = normalize(cross(view, up));
 	vec3 unit_y = normalize(cross(unit_z, unit_x));
 	float distance = h / 2 / glm::tan(glm::radians(fovy / 2));
+	//distance = distance / 4;
 	vec3 Top_Left_corner = distance * unit_z - unit_x * (float)w / 2 - unit_y * (float)h / 2;
 
  	for (uint y = 0; y < h; ++y) {
