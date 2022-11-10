@@ -5,7 +5,7 @@ using namespace glm;
 Ray::Ray() 
     : origin(vec3(0.0f, 0.0f, 0.0f)), direction(vec3(0.0f, 0.0f, 0.0f)) {}
 
-Ray::Ray(vec3 o, vec3 d)
+Ray::Ray(const vec3& o, const vec3& d)
     : origin(o), direction(d) {}
 
 vec3 Ray::Get_origin() {

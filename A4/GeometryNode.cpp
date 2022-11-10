@@ -33,18 +33,26 @@ void GeometryNode::setMaterial( Material *mat )
 	m_material = mat;
 }
 
-bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_length) {
+bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 	Ray temp_ray;
 	temp_ray.Set_origin(vec3(invtrans * vec4(ray.Get_origin(), 1.0f)));
 	temp_ray.Set_direction(vec3(invtrans * vec4(ray.Get_direction(), 0.0f)));
-	float min_length = ray_length;
-	Intersection temp_intersection;
+
+	/*Intersection temp_intersection;
+	bool hit_child = false;
 	for (SceneNode *child : children) {
-		if (child->hit(temp_ray, temp_intersection, ray_length) && min_length > ray_length) {
-			intersection = temp_intersection;
-			return true;
+		if ( child->hit(temp_ray, temp_intersection, ray_t) ) {
+			children_t = ray_t;
+			hit_child = true;
 		}
+	}*/
+
+	if ( m_primitive->hit(temp_ray, intersection, ray_t) ) {
+		intersection.normal = vec3(trans * vec4(intersection.normal, 0.0f));
+		intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));
+		intersection.material = m_material;
+		return true;
 	}
-	return false;
+
 	return false;
 }

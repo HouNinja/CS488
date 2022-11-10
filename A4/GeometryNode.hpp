@@ -18,5 +18,5 @@ public:
 	Material *m_material;
 	Primitive *m_primitive;
 
-	virtual bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
+	virtual bool hit(Ray ray, Intersection & intersection, float & ray_t) override;
 };

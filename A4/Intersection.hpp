@@ -4,7 +4,7 @@
 #include "Material.hpp"
 
 class Intersection {
-    private:
+    public:
     glm::vec3 hit_point;
     glm::vec3 normal;
     Material *material;

@@ -5,6 +5,7 @@
 #include "Light.hpp"
 #include "Image.hpp"
 
+using namespace glm;
 
 class Ray {
     private:
@@ -12,9 +13,9 @@ class Ray {
     glm::vec3 direction;
     public:
     Ray();
-    Ray(glm::vec3 o, glm::vec3 d);
-    glm::vec3 Get_origin();
-    glm::vec3 Get_direction();
-    void Set_origin(glm::vec3 neworigin);
-    void Set_direction(glm::vec3 newdirection);
+    Ray(const vec3& o, const vec3& d);
+    vec3 Get_origin();
+    vec3 Get_direction();
+    void Set_origin(vec3 neworigin);
+    void Set_direction(vec3 newdirection);
 };

@@ -5,14 +5,24 @@
 using namespace glm;
 
 #include "A4.hpp"
+#include "Ray.hpp"
+#include "PhongMaterial.hpp"
 
 vec3 trace_ray(
-	Ray * ray,
+	Ray ray,
 	SceneNode * root,
 	const glm::vec3 & eye,
 	const glm::vec3 & ambient,
 	const std::list<Light *> & lights
 ) {
+	Intersection intersection;
+	float max = std::numeric_limits<float>::max();
+	if ( root->hit(ray, intersection, max) ) {
+		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
+		if ( material != nullptr) {
+			return material->Get_kd();
+		}
+	}
 	return vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -63,13 +73,15 @@ void A4_Render(
 
  	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
-			vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
+			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
+			Ray ray = Ray(eye, direction);
+			vec3 color = trace_ray(ray, root, eye, ambient, lights);
 			// Red: 
-			image(x, y, 0) = (double)1.0;
+			image(x, y, 0) = (double)color.r;
 			// Green: 
-			image(x, y, 1) = (double)0.0;
+			image(x, y, 1) = (double)color.g;
 			// Blue: 
-			image(x, y, 2) = (double)1.0;
+			image(x, y, 2) = (double)color.b;
 		}
 	}
 
