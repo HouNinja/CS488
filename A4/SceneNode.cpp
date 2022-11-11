@@ -152,7 +152,9 @@ bool SceneNode::hit(Ray ray, Intersection & intersection, float & ray_length) {
 			result = true;
 		}
 	}
-	intersection.hit_point = vec3(trans * vec4(temp_intersection.hit_point, 1.0f));
-	intersection.normal = transpose(mat3(invtrans)) * temp_intersection.normal;
+	if ( result ) {
+		intersection.hit_point = vec3(trans * vec4(temp_intersection.hit_point, 1.0f));
+		intersection.normal = transpose(mat3(invtrans)) * temp_intersection.normal;
+	}
 	return result;
 }
