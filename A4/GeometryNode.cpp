@@ -38,20 +38,23 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 	temp_ray.Set_origin(vec3(invtrans * vec4(ray.Get_origin(), 1.0f)));
 	temp_ray.Set_direction(vec3(invtrans * vec4(ray.Get_direction(), 0.0f)));
 
-	/*Intersection temp_intersection;
-	bool hit_child = false;
+	Intersection temp_intersection;
+	float min_length = ray_t;
+	bool result = false;
 	for (SceneNode *child : children) {
-		if ( child->hit(temp_ray, temp_intersection, ray_t) ) {
-			children_t = ray_t;
-			hit_child = true;
+		if ( child->hit(temp_ray, temp_intersection, min_length) ) {
+			intersection = temp_intersection;
+			ray_t = min_length;
+			result = true;
 		}
-	}*/
-	if ( m_primitive->hit(temp_ray, intersection, ray_t) ) {
-		intersection.normal = vec3(trans * vec4(intersection.normal, 0.0f));
-		intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));
-		intersection.material = m_material;
-		return true;
 	}
-
-	return false;
+	if ( m_primitive->hit(temp_ray, intersection, ray_t) ) {
+		//std::cout << " reach here"<< std::endl
+		intersection.material = m_material;
+		result = true;
+	}
+	intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));
+	//intersection.normal = vec3(trans * vec4(intersection.normal, 1.0f));
+	intersection.normal = transpose(mat3(invtrans)) * intersection.normal;
+	return result;
 }

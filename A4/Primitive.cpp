@@ -12,14 +12,28 @@ bool Primitive::hit(Ray ray, Intersection & intersection, float & ray_length) {
     return false;
 }
 
-Sphere::~Sphere() {}
-bool Sphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
-    return false;
+Sphere::Sphere() {
+    nonhiersphere = new NonhierSphere(vec3(0.0, 0.0, 0.0), 1.0);
 }
 
-Cube::~Cube() {}
+Sphere::~Sphere() {
+    delete nonhiersphere;
+}
+
+bool Sphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
+    return nonhiersphere->hit(ray, intersection, ray_length);
+}
+
+Cube::Cube() {
+    nonhiercube = new NonhierBox(vec3(0.0, 0.0, 0.0), 1.0);
+}
+
+Cube::~Cube() {
+    delete nonhiercube;
+}
+
 bool Cube::hit(Ray ray, Intersection & intersection, float & ray_length) {
-    return false;
+    return nonhiercube->hit(ray, intersection, ray_length);
 }
 
 NonhierSphere::~NonhierSphere() {}
@@ -41,7 +55,7 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
         new_t = roots[0];
     } else {
         new_t = std::min(roots[0], roots[1]);
-
+        //Possible Error: If one negative, one positive, the origin of ray is inside sphere;
     }
     if ( new_t < ray_length && new_t > EPSILON) {
         ray_length = new_t;
@@ -57,7 +71,7 @@ NonhierBox::~NonhierBox() {}
 
 
 bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, float &res) {
-	const float EPSILON = 0.000001;
+	const float EPSILON = 0.00001;
 	glm::vec3 edge1, edge2, h, s, q;
 	double a, f, u, v;
 	edge1 = vertex1 - vertex0;

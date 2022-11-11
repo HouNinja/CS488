@@ -21,6 +21,9 @@ vec3 trace_ray(
 	float max = std::numeric_limits<float>::max();
 	vec3 final_color = vec3(0.0f, 0.0f, 0.0f);
 	if ( root->hit(ray, intersection, max) ) {
+		if ( intersection.material == nullptr) {
+			std::cout << " material missing" << std::endl;
+		}
 		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
 		vec3 kd = material->Get_kd();
 		vec3 ks = material->Get_ks();
@@ -41,22 +44,22 @@ vec3 trace_ray(
 
 			double r = length(lightray.Get_direction());
 			double attenuation = 1.0 / (light->falloff[0] + light->falloff[1] * r + light->falloff[2] * r * r);
-
+			
 			vec3 L = normalize(lightray.Get_direction());
 			vec3 N = normalize(intersection.normal);
 			vec3 R = normalize(2 * dot(L, N) * N - L);
 			vec3 V = normalize(eye - intersection.hit_point);
 
 			//diffuse
-			vec3 temp = attenuation * dot(L, N) * kd * light->colour;
+			//vec3 temp = attenuation * dot(L, N) * kd * light->colour;
 			//std::cout << temp.x << " " << temp.y << " " << temp.z << std::endl;
 			final_color += attenuation * dot(L, N) * kd * light->colour;
 			//specular
-			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * light->colour;
-
+			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+			//std::cout << dot(R, V) << std::endl;
 			//Code for mirrow reflection:
 			if ( n_hits > 0 ) {
-				vec3 reflected_direction = normalize(2 * dot(V,N) * N - V) * 500;
+				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
 				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
 				float cofr = 0.15;
 				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) * cofr;

@@ -15,6 +15,7 @@ public:
 class Sphere : public Primitive {
   Primitive * nonhiersphere;
 public:
+  Sphere();
   virtual ~Sphere();
   virtual bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
 };
@@ -22,6 +23,7 @@ public:
 class Cube : public Primitive {
   Primitive * nonhiercube;
 public:
+  Cube();
   virtual ~Cube();
   virtual bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
 };
