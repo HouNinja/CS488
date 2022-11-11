@@ -53,8 +53,10 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 		intersection.material = m_material;
 		result = true;
 	}
-	intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));
-	//intersection.normal = vec3(trans * vec4(intersection.normal, 1.0f));
-	intersection.normal = transpose(mat3(invtrans)) * intersection.normal;
+	if ( result ) {
+		// if it's false and intersection has a value(from another subtree), without the if, 
+		intersection.hit_point = vec3(trans * vec4(intersection.hit_point, 1.0f));
+		intersection.normal = transpose(mat3(invtrans)) * intersection.normal;
+	}
 	return result;
 }
