@@ -18,11 +18,15 @@ scene:add_child(plane)
 plane:set_material(grass)
 plane:scale(30, 30, 30)
 
+--sphere = gr.sphere( 'sphere')
+--scene:add_child(sphere)
+--sphere:set_material(grass)
+--sphere:scale(30, 30, 30)
 
 -- The lights
 l1 = gr.light({200,200,400}, {0.8, 0.8, 0.8}, {1, 0, 0})
 l2 = gr.light({0, 5, -20}, {0.4, 0.4, 0.8}, {1, 0, 0})
 
 gr.render(scene, 'hier.png', 256, 256, 
-	  {0, 0, 0,}, {0, 0, -1}, {0, 1, 0}, 50,
+	  {0, 0, 100,}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.4, 0.4, 0.4}, {l1, l2})

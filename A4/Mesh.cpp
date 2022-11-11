@@ -26,6 +26,7 @@ Mesh::Mesh( const std::string& fname )
 	double x_min = std::numeric_limits<double>::max();
 	double y_min = std::numeric_limits<double>::max();
 	double z_min = std::numeric_limits<double>::max();
+	//double radius = 0;
 
 	while( ifs >> code ) {
 		
@@ -37,6 +38,7 @@ Mesh::Mesh( const std::string& fname )
 			y_min = std::min(vy, y_min);
 			z_max = std::max(vz, z_max);
 			z_min = std::min(vz, z_min);
+			//radius = std::max()
 			m_vertices.push_back( glm::vec3( vx, vy, vz ) );
 		} else if( code == "f" ) {
 			ifs >> s1 >> s2 >> s3;
@@ -44,8 +46,8 @@ Mesh::Mesh( const std::string& fname )
 		}
 	}
 	
-	double radius = std::max((x_max - x_min) / 2, (y_max - y_min) / 2);
-	radius = std::max(radius, (z_max - z_min) / 2);
+	//vec3 center = vec3((x_max + x_min) / 2, (y_max + y_min) / 2, (z_max + z_min) / 2);
+	double radius = sqrt(pow((x_max - x_min) / 2, 2) + pow((y_max - y_min) / 2, 2) + pow((z_max - z_min) / 2, 2));
 	radius *= 1.000001;
 
 	//std::cout << (x_max + x_min) / 2 <<" " << (y_max + y_min) / 2 << " " << (z_max + z_min) / 2 << std::endl;
@@ -132,12 +134,13 @@ bool Mesh::hit(Ray ray, Intersection & intersection, float & ray_length) {
 	if ( !bounding_sphere->hit(temp_ray, temp_intersection, max) ) {
 		return false;
 	}
-
+	
 #ifdef RENDER_BOUNDING_VOLUMES
-	max = ray_length;
-	if ( bounding_sphere->hit(ray, temp_intersection, max) ) {
-		intersection = temp_intersection;
-		ray_length = max;
+	//std::cout << "the t1 value is " << max << std::endl;
+	if ( bounding_sphere->hit(ray, intersection, ray_length) ) {
+		//std::cout << "the t2 value is " << max << std::endl;
+		//intersection = temp2_intersection;
+		//ray_length = max;
 		return true;
 	}
 #endif

@@ -70,7 +70,7 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
     }
     //std::cout << new_t << std::endl;
     if ( new_t < ray_length && new_t > EPSILON) {
-        ray_length = new_t;
+        ray_length = new_t - EPSILON;
         intersection.hit_point = ray.Get_origin() + (ray_length - 3 * EPSILON) * ray.Get_direction();
         intersection.normal = intersection.hit_point - m_pos;
         //intersection.material = nonhiersphere.material
