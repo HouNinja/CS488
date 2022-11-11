@@ -38,6 +38,10 @@ bool Cube::hit(Ray ray, Intersection & intersection, float & ray_length) {
 
 NonhierSphere::~NonhierSphere() {}
 
+double NonhierSphere::Get_radius() {
+    return m_radius;
+}
+
 bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
     // If there exists a hit point: dot(origin + t * direction - m_mos) = radius ^ 2;
     const float EPSILON = 0.0000005;
@@ -55,11 +59,19 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
         new_t = roots[0];
     } else {
         new_t = std::min(roots[0], roots[1]);
+        /*if ( roots[0] >= 0 && roots[1] >=0 ) {
+            new_t = std::min(roots[0], roots[1]);
+        } else if ( roots[0] < 0 ) {
+            new_t = roots[1];
+        } else {
+            new_t = roots[0];
+        }*/
         //Possible Error: If one negative, one positive, the origin of ray is inside sphere;
     }
+    //std::cout << new_t << std::endl;
     if ( new_t < ray_length && new_t > EPSILON) {
         ray_length = new_t;
-        intersection.hit_point = ray.Get_origin() + new_t * ray.Get_direction();
+        intersection.hit_point = ray.Get_origin() + (ray_length - 3 * EPSILON) * ray.Get_direction();
         intersection.normal = intersection.hit_point - m_pos;
         //intersection.material = nonhiersphere.material
         return true;
@@ -95,7 +107,7 @@ bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, fl
 	float t = f * glm::dot(edge2, q);
 	if (t > EPSILON && t < res) // ray intersection
 	{
-		res = t;
+		res = t - EPSILON;
 		return true;
 	}
 	else // This means that there is a line intersection but not a ray intersection.

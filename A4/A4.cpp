@@ -17,6 +17,7 @@ vec3 trace_ray(
 	const std::list<Light *> & lights,
 	int n_hits
 ) {
+	const float EPSILON = 0.000001;
 	Intersection intersection;
 	float max = std::numeric_limits<float>::max();
 	vec3 final_color = vec3(0.0f, 0.0f, 0.0f);
@@ -53,16 +54,21 @@ vec3 trace_ray(
 			//diffuse
 			//vec3 temp = attenuation * dot(L, N) * kd * light->colour;
 			//std::cout << temp.x << " " << temp.y << " " << temp.z << std::endl;
-			final_color += attenuation * dot(L, N) * kd * light->colour;
+			if ( attenuation * dot(L, N) > EPSILON ) {
+				final_color += attenuation * dot(L, N) * kd * light->colour;
+			}
 			//specular
-			final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+			if ( attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) > EPSILON ) {
+				final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+			}
+			//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			//std::cout << dot(R, V) << std::endl;
 			//Code for mirrow reflection:
 			if ( n_hits > 0 ) {
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
 				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
 				float cofr = 0.15;
-				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) * cofr;
+				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) *cofr;
 			}
 
 		}
@@ -71,6 +77,7 @@ vec3 trace_ray(
 		final_color += unit.x * vec3(0.3,0.3,0.9) + (1 - unit.x) * vec3 (0.6, 0.6, 0.6);
 		final_color += unit.y * vec3(0.3,0.3,0.9) + (1 - unit.y) * vec3 (0.6, 0.6, 0.6);
 		final_color /= 2;
+		//final_color = vec3(0.5, 0.5, 0.5);
 	}
 	return final_color;
 }

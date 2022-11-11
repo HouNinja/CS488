@@ -20,11 +20,23 @@ Mesh::Mesh( const std::string& fname )
 	
 	//std::string test = "test.txt";
 	std::ifstream ifs( fname.c_str() );
-	
+	double x_max = std::numeric_limits<double>::min();
+	double y_max = std::numeric_limits<double>::min();
+	double z_max = std::numeric_limits<double>::min();
+	double x_min = std::numeric_limits<double>::max();
+	double y_min = std::numeric_limits<double>::max();
+	double z_min = std::numeric_limits<double>::max();
+
 	while( ifs >> code ) {
 		
 		if( code == "v" ) {
 			ifs >> vx >> vy >> vz;
+			x_max = std::max(vx, x_max);
+			x_min = std::min(vx, x_min);
+			y_max = std::max(vy, y_max);
+			y_min = std::min(vy, y_min);
+			z_max = std::max(vz, z_max);
+			z_min = std::min(vz, z_min);
 			m_vertices.push_back( glm::vec3( vx, vy, vz ) );
 		} else if( code == "f" ) {
 			ifs >> s1 >> s2 >> s3;
@@ -32,8 +44,23 @@ Mesh::Mesh( const std::string& fname )
 		}
 	}
 	
+	double radius = std::max((x_max - x_min) / 2, (y_max - y_min) / 2);
+	radius = std::max(radius, (z_max - z_min) / 2);
+	radius *= 1.000001;
+
+	//std::cout << (x_max + x_min) / 2 <<" " << (y_max + y_min) / 2 << " " << (z_max + z_min) / 2 << std::endl;
+	std::cout << radius << std::endl;
+	if ( radius > 0 ) {
+		bounding_sphere = new NonhierSphere(vec3((x_max + x_min) / 2, (y_max + y_min) / 2, (z_max + z_min) / 2), radius);
+	}
+	
 }
 
+Mesh::~Mesh() {
+	if ( bounding_sphere != nullptr ) {
+		delete bounding_sphere;
+	}
+}
 std::ostream& operator<<(std::ostream& out, const Mesh& mesh)
 {
   out << "mesh {";
@@ -97,6 +124,24 @@ vec3 r_n(vec3 direction, vec3 prev_normal) {
 
 bool Mesh::hit(Ray ray, Intersection & intersection, float & ray_length) {
 	bool result = false;
+	NonhierSphere * address = static_cast<NonhierSphere *>(bounding_sphere);
+	float diameter_t = address->Get_radius() / length(ray.Get_direction());
+	Ray temp_ray = Ray(ray.Get_origin() - (diameter_t + 1) * ray.Get_direction(), ray.Get_direction());
+	Intersection temp_intersection;
+	float max = std::numeric_limits<float>::max();
+	if ( !bounding_sphere->hit(temp_ray, temp_intersection, max) ) {
+		return false;
+	}
+
+#ifdef RENDER_BOUNDING_VOLUMES
+	max = ray_length;
+	if ( bounding_sphere->hit(ray, temp_intersection, max) ) {
+		intersection = temp_intersection;
+		ray_length = max;
+		return true;
+	}
+#endif
+	
 	for (int i = 0; i < m_faces.size(); ++i) {
 		Triangle triangle = m_faces[i];
 		if ( t_i(ray, m_vertices[triangle.v1], m_vertices[triangle.v2], m_vertices[triangle.v3], ray_length) ) {

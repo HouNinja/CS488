@@ -34,6 +34,7 @@ public:
     : m_pos(pos), m_radius(radius) {}
   virtual ~NonhierSphere();
   virtual bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
+  double Get_radius();
 
 private:
   glm::vec3 m_pos;
