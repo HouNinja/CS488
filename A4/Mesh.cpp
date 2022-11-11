@@ -5,7 +5,7 @@
 
 #include <glm/ext.hpp>
 
-// #include "cs488-framework/ObjFileDecoder.hpp"
+#include "cs488-framework/ObjFileDecoder.hpp"
 #include "Mesh.hpp"
 
 using namespace glm;
@@ -17,6 +17,8 @@ Mesh::Mesh( const std::string& fname )
 	std::string code;
 	double vx, vy, vz;
 	size_t s1, s2, s3;
+	
+	//std::string test = "test.txt";
 	std::ifstream ifs( fname.c_str() );
 	
 	while( ifs >> code ) {
@@ -102,7 +104,7 @@ bool Mesh::hit(Ray ray, Intersection & intersection, float & ray_length) {
 			vec3 prev_normal = cross(m_vertices[triangle.v2] - m_vertices[triangle.v1], m_vertices[triangle.v3] - m_vertices[triangle.v1]);
 			intersection.normal = r_n(ray.Get_direction(), prev_normal);
 			result = true;
-			std::cout << "it reaches here" << std::endl;
+			//std::cout << "it reaches here" << std::endl;
 		}
 
 	}

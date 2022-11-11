@@ -122,7 +122,7 @@ void A4_Render(
 		for (uint x = 0; x < w; ++x) {
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
-			vec3 color = trace_ray(ray, root, eye, ambient, lights, 1);
+			vec3 color = trace_ray(ray, root, eye, ambient, lights, 0);
 			// Red: 
 			image(x, y, 0) = (double)color.r;
 			// Green: 

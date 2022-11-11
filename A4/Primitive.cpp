@@ -27,9 +27,9 @@ NonhierSphere::~NonhierSphere() {}
 bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
     // If there exists a hit point: dot(origin + t * direction - m_mos) = radius ^ 2;
     vec3 temp = ray.Get_origin() - m_pos;
-    float A = dot(ray.Get_direction(), ray.Get_direction());
-    float B = 2 * dot(ray.Get_direction(), temp);
-    float C = dot(temp, temp) - m_radius * m_radius;
+    double A = dot(ray.Get_direction(), ray.Get_direction());
+    double B = 2 * dot(ray.Get_direction(), temp);
+    double C = dot(temp, temp) - m_radius * m_radius;
     double roots[2];
     size_t n_root = quadraticRoots(A, B, C, roots);
 
@@ -58,7 +58,7 @@ NonhierBox::~NonhierBox() {}
 bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, float &res) {
 	const float EPSILON = 0.0000001;
 	glm::vec3 edge1, edge2, h, s, q;
-	float a, f, u, v;
+	double a, f, u, v;
 	edge1 = vertex1 - vertex0;
 	edge2 = vertex2 - vertex0; 
 
