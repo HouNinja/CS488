@@ -26,6 +26,7 @@ NonhierSphere::~NonhierSphere() {}
 
 bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
     // If there exists a hit point: dot(origin + t * direction - m_mos) = radius ^ 2;
+    const float EPSILON = 0.0000005;
     vec3 temp = ray.Get_origin() - m_pos;
     double A = dot(ray.Get_direction(), ray.Get_direction());
     double B = 2 * dot(ray.Get_direction(), temp);
@@ -42,7 +43,7 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
         new_t = std::min(roots[0], roots[1]);
 
     }
-    if ( new_t < ray_length && new_t > 0) {
+    if ( new_t < ray_length && new_t > EPSILON) {
         ray_length = new_t;
         intersection.hit_point = ray.Get_origin() + new_t * ray.Get_direction();
         intersection.normal = intersection.hit_point - m_pos;
@@ -56,7 +57,7 @@ NonhierBox::~NonhierBox() {}
 
 
 bool triangleIntersection(Ray &ray, vec3 vertex0, vec3 vertex1, vec3 vertex2, float &res) {
-	const float EPSILON = 0.0000001;
+	const float EPSILON = 0.000001;
 	glm::vec3 edge1, edge2, h, s, q;
 	double a, f, u, v;
 	edge1 = vertex1 - vertex0;

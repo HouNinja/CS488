@@ -56,7 +56,7 @@ vec3 trace_ray(
 
 			//Code for mirrow reflection:
 			if ( n_hits > 0 ) {
-				vec3 reflected_direction = normalize(2 * dot(V,N) * N - V);
+				vec3 reflected_direction = normalize(2 * dot(V,N) * N - V) * 500;
 				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
 				float cofr = 0.15;
 				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) * cofr;
@@ -122,7 +122,7 @@ void A4_Render(
 		for (uint x = 0; x < w; ++x) {
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
-			vec3 color = trace_ray(ray, root, eye, ambient, lights, 0);
+			vec3 color = trace_ray(ray, root, eye, ambient, lights, 3);
 			// Red: 
 			image(x, y, 0) = (double)color.r;
 			// Green: 
