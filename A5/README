@@ -1,0 +1,17 @@
+Compilation:
+Three commands:
+1. premake4 gmake
+2. make
+3. ./A4 Assets/{lua script file}
+
+tested on virtual machine
+
+Extra feature: Mirror Reflection
+
+Manual:
+1. All the final images are in Assets file,
+
+2. I use ifdef to switch rendering mode: If testers would like to see bounding volume, please go to Mesh.ssh
+and comment out the #define line
+
+3. My sample scene is simple, but all 10 objectives can be tested.
