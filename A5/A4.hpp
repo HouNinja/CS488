@@ -8,6 +8,7 @@
 #include "Light.hpp"
 #include "Image.hpp"
 #include "Ray.hpp"
+#include "Options.hpp"
 
 glm::vec3 trace_ray(
 	Ray * ray,

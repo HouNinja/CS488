@@ -134,6 +134,28 @@ void A4_Render(
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
 			vec3 color = trace_ray(ray, root, eye, ambient, lights, 3);
+			#ifdef ENABLE_ANTI_ALIASING
+			//std::cout << "anti-aliasing enabled" << std::endl;
+			const float threshhold = 0.000001;
+			vec3 final_color = vec3(0.0, 0.0, 0.0);
+			for (int i = -1; i <= 1; ++i) {
+				for (int j = -1; j <= 1; ++j) {
+					if ( i == 0 && j == 0 ) {
+						final_color += color;
+					} else {
+						const vec3 temp_direction = Top_Left_corner + x * unit_x + y * unit_y + i * unit_x / 2.0 + j * unit_y / 2.0;
+						Ray temp_ray = Ray(eye, temp_direction);
+						final_color += trace_ray(temp_ray, root, eye, ambient, lights, 3);
+					}
+				}
+			}
+			final_color /= 9;
+			/*if ( length(final_color - color) > threshhold ) {
+				color = final_color;
+			}*/
+			color = final_color;
+			
+			#endif
 			// Red: 
 			image(x, y, 0) = (double)color.r;
 			// Green: 

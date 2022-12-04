@@ -79,7 +79,7 @@ Debug/scene_lua.o: ../scene_lua.cpp ../scene_lua.hpp ../lua488.hpp \
  ../../shared/include/glm/detail/func_integer.inl ../Mesh.hpp \
  ../Primitive.hpp ../Ray.hpp ../Image.hpp ../Intersection.hpp \
  ../Material.hpp ../GeometryNode.hpp ../SceneNode.hpp ../JointNode.hpp \
- ../PhongMaterial.hpp ../A4.hpp
+ ../PhongMaterial.hpp ../A4.hpp ../Options.hpp
 
 ../scene_lua.hpp:
 
@@ -268,3 +268,5 @@ Debug/scene_lua.o: ../scene_lua.cpp ../scene_lua.hpp ../lua488.hpp \
 ../PhongMaterial.hpp:
 
 ../A4.hpp:
+
+../Options.hpp:
