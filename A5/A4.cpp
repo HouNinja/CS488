@@ -26,6 +26,11 @@ vec3 trace_ray(
 			std::cout << " material missing" << std::endl;
 		}
 		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
+
+		/*if ( material->coef_reflection() != 0 ) {
+			std::cout << material->coef_reflection() << " data has been read " << material->Get_shininess() << std::endl;
+		}*/
+
 		vec3 kd = material->Get_kd();
 		vec3 ks = material->Get_ks();
 		double shininess = material->Get_shininess();
@@ -60,16 +65,72 @@ vec3 trace_ray(
 			//specular
 			//std::cout << R.x << R.y << R.z<< V.x << V.y << V.z << std::endl;
 			if ( attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) > EPSILON ) {
-				//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+				final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			}
 			//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			//std::cout << dot(R, V) << std::endl;
 			//Code for mirrow reflection:
 			if ( n_hits > 0 ) {
+				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
-				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
-				float cofr = 0.15;
-				final_color = final_color * (1 - cofr) + trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) *cofr;
+				Ray reflected_ray = Ray(intersection.hit_point + 2 * EPSILON * N, reflected_direction);
+				float reflection = 0.15;
+				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
+				/*if ( reflected.g != reflected.g) {
+					std::cout << "reach here" << std::endl;
+					vec3 temp = intersection.hit_point;
+					std::cout << N.x << N.y << N.z << std::endl;
+					std::cout << eye.x << eye.y << eye.z << std::endl;
+					std::cout << temp.x << temp.y << temp.z << std::endl;
+					std::cout << V.x << V.y << V.z << std::endl;
+					std::cout << "reflected: " << reflected.r << " " << reflected.g << " " << reflected.b << std::endl;
+					//std::cout << "sin1: " << sin_theta1 << "sin2 " << sin_theta2 << "hits" << n_hits << std::endl;
+					//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << "hits" << n_hits << std::endl;
+				}*/
+
+
+				
+				// Refraction
+				//vec3 unit_d = normalize(Ray.Get_direction());
+				double factor = material->refraction_factor();
+				double cosine_theta1 = -dot(ray.Get_direction(), N) / length(ray.Get_direction()) / length(N);
+				double sin_theta1 = sqrt(1 - pow(cosine_theta1, 2));
+				double sin_theta2 = sin_theta1 / factor;
+				double cos_theta2 = sqrt(1 - pow(sin_theta2, 2));
+
+				/*if ( cosine_theta1 <= EPSILON || cosine_theta1 >= 1 - EPSILON ) {
+					std::cout << "such point exist" << std::endl;
+				}*/
+
+				vec3 projection = -intersection.normal * cosine_theta1 * length(ray.Get_direction());
+				vec3 difference = normalize(ray.Get_direction() - projection);
+				vec3 refracted_direction = projection + (length(ray.Get_direction()) * cosine_theta1 / cos_theta2 * sin_theta2) * difference;
+				Ray refracted_ray = Ray(intersection.hit_point  - 2 * EPSILON * N , refracted_direction);
+				float refraction = 0.10;
+
+				vec3 refracted = trace_ray(refracted_ray, root, eye, ambient, lights, n_hits - 1);
+				//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << std::endl;
+				//std::cout << "refracted: " <<refracted.r << " " << refracted.g << " " << refracted.b << std::endl;
+				
+				/*if ( cosine_theta1 <= EPSILON || cosine_theta1 >= 1 - EPSILON || cos_theta2 <= EPSILON || cos_theta2 >= 1 - EPSILON) {
+					refracted = final_color;
+				}*/
+
+				if ( refracted.g != refracted.g ) {
+					//std::cout << "refracted: " << refracted_direction.r << " " << refracted_direction.g << " " << refracted_direction.b << std::endl;
+					//std::cout << "sin1: " << sin_theta1 << "sin2 " << sin_theta2 << "hits" << n_hits << std::endl;
+					//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << "hits" << n_hits << std::endl;
+				}
+				
+				final_color = final_color * (1 - reflection - refraction) + 
+				reflected * reflection + refracted * refraction;
+				
+				//std::cout << "final: " << final_color.r << " " << final_color.g << " " << final_color.b << std::endl;
+				//std::cout << -dot(ray.Get_direction(), N) << " " << length(ray.Get_direction()) << std::endl;
+				
+
+				/*final_color = final_color * (1 - reflection) + 
+				trace_ray(reflected_ray, root, intersection.hit_point, ambient, lights, n_hits - 1) * reflection;*/
 			}
 
 		}
@@ -80,6 +141,7 @@ vec3 trace_ray(
 		final_color /= 2;
 		//final_color = vec3(0.5, 0.5, 0.5);
 	}
+	
 	return final_color;
 }
 
@@ -133,7 +195,7 @@ void A4_Render(
 		for (uint x = 0; x < w; ++x) {
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
-			vec3 color = trace_ray(ray, root, eye, ambient, lights, 3);
+			vec3 color = trace_ray(ray, root, eye, ambient, lights, 2);
 			#ifdef ENABLE_ANTI_ALIASING
 			//std::cout << "anti-aliasing enabled" << std::endl;
 			const float threshhold = 0.000001;

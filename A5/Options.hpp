@@ -1,2 +1,2 @@
 
-#define ENABLE_ANTI_ALIASING
+//#define ENABLE_ANTI_ALIASING
