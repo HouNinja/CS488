@@ -58,8 +58,9 @@ vec3 trace_ray(
 				final_color += attenuation * dot(L, N) * kd * light->colour;
 			}
 			//specular
+			//std::cout << R.x << R.y << R.z<< V.x << V.y << V.z << std::endl;
 			if ( attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) > EPSILON ) {
-				final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+				//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			}
 			//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			//std::cout << dot(R, V) << std::endl;

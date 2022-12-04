@@ -8,10 +8,9 @@
 using namespace glm;
 
 class Ray {
-    private:
+    public:
     glm::vec3 origin;
     glm::vec3 direction;
-    public:
     Ray();
     Ray(const vec3& o, const vec3& d);
     vec3 Get_origin();

@@ -51,3 +51,21 @@ private:
   glm::vec3 m_pos;
   double m_size;
 };
+
+class Cylinder : public Primitive {
+public:
+  Cylinder();
+  /*NonhierCylinder(const glm::vec3& pos, double radius, double height)
+    : m_pos(pos), m_radius(radius), m_height(height) {}*/
+  virtual ~Cylinder();
+  virtual bool hit(Ray ray, Intersection & intersection, float & min_length) override;
+};
+
+class Cone : public Primitive {
+public:
+  Cone();
+  /*NonhierCylinder(const glm::vec3& pos, double radius, double height)
+    : m_pos(pos), m_radius(radius), m_height(height) {}*/
+  virtual ~Cone();
+  virtual bool hit(Ray ray, Intersection & intersection, float & min_length) override;
+};

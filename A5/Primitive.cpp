@@ -247,3 +247,175 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     }
     return result;
 }
+
+Cylinder::Cylinder() {}
+Cylinder::~Cylinder() {}
+
+bool Cylinder::hit(Ray ray, Intersection & intersection, float & min_length) {
+    const float EPSILON = 0.00001;
+    bool result = false;
+    float final_t = min_length;
+    vec3 temp_norm;
+
+    float A = ray.Get_direction().x * ray.Get_direction().x + ray.direction.z * ray.direction.z;
+    float B = 2 * ( ray.origin.x * ray.direction.x + ray.origin.z * ray.direction.z);
+    float C = ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z - 1;
+    double roots[2];
+    int num_roots = quadraticRoots(A, B, C, roots);
+    /*if ( num_roots > 0 ) {
+         std::cout << "reach here" << std::endl;
+    }*/
+   
+    if ( num_roots == 0 ) {
+        return false;
+    } else if ( num_roots == 1 ) {
+        float t = roots[0];
+        glm::vec3 destination = ray.origin + t * ray.direction;
+        if ( destination.y >= -1 && destination.y <= 1 ) {
+            temp_norm = normalize(vec3(destination.x, 0, destination.z));
+            final_t = t;
+            result = true;
+        } 
+    } else if ( num_roots == 2) {
+        float t1 = roots[0];
+        float t2 = roots[1];
+        if ( t1 > t2 ) {
+            std::swap(t1, t2);
+        }
+
+        glm::vec3 destination1 = ray.origin + t1 * ray.direction;
+        glm::vec3 destination2 = ray.origin + t2 * ray.direction;
+        if ( destination1.y < -1 ) {
+            if ( destination2.y < -1 ) {
+                return false;
+            } else {
+                float ratio = (destination2.y + 1) / (destination2.y - destination1.y);
+                final_t = t1 + (t2 - t1) * (1 - ratio);
+                result = true;
+                temp_norm = vec3(0.0, -1.0, 0.0);
+            }
+        } else if ( destination1.y > 1 ) {
+             if ( destination2.y > 1 ) {
+                return false;
+            } else {
+                float ratio = (destination2.y - 1) / (destination2.y - destination1.y);
+                final_t = t1 + (t2 - t1) * (1 - ratio);
+                result = true;
+                temp_norm = vec3(0.0, 1.0, 0.0);
+            }
+        } else {
+            temp_norm = normalize(vec3(destination1.x, 0, destination1.z));
+            final_t = t1;
+            result = true;
+        }
+    }
+
+    if ( result && final_t > EPSILON && final_t < min_length) {
+        intersection.hit_point = ray.origin + final_t * ray.direction;
+        intersection.normal = temp_norm;
+        min_length = final_t - EPSILON;
+        return true;
+    }
+
+    return false;
+}
+
+
+Cone::Cone() {}
+Cone::~Cone() {}
+
+bool Cone::hit(Ray ray, Intersection & intersection, float & min_length) {
+    const float EPSILON = 0.00001;
+    bool result = false;
+    float final_t = min_length;
+    vec3 temp_norm;
+
+    float A = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z - ray.direction.y * ray.direction.y;
+    float B = 2 * ( ray.origin.x * ray.direction.x + ray.origin.z * ray.direction.z - ray.origin.y * ray.direction.y);
+    float C = ray.origin.x * ray.origin.x + ray.origin.z * ray.origin.z - ray.origin.y * ray.origin.y;
+    double roots[2];
+    int num_roots = quadraticRoots(A, B, C, roots);
+
+    if ( num_roots == 0 ) {
+        return false;
+    } else if ( num_roots == 1 ) {
+        float t = roots[0];
+        glm::vec3 destination = ray.origin + t * ray.direction;
+        if ( destination.y > 0 && destination.y <= 1 ) {
+            vec3 radius(destination.x, 0 , destination.z);
+            vec3 tangent = cross(radius, destination);
+            temp_norm = normalize(cross(destination, tangent));
+            if ( temp_norm.y > 0 ) {
+                temp_norm = - temp_norm;
+            }
+            final_t = t;
+            result = true;
+        } 
+    } else if ( num_roots == 2) {
+        float t1 = roots[0] + EPSILON;
+        float t2 = roots[1] + EPSILON;
+        if ( t1 > t2 ) {
+            std::swap(t1, t2);
+        }
+
+        glm::vec3 destination1 = ray.origin + t1 * ray.direction;
+        glm::vec3 destination2 = ray.origin + t2 * ray.direction;
+        if ( destination1.y <= 0 ) {
+            if ( destination2.y <= 0 ) {
+                return false;
+            } else if ( destination2.y <= 1){
+                vec3 radius(destination2.x, 0 , destination2.z);
+                vec3 tangent = cross(radius, destination2);
+                temp_norm = normalize(cross(destination2, tangent));
+                if ( temp_norm.y > 0 ) {
+                    temp_norm = - temp_norm;
+                }
+                final_t = t2;
+                result = true;
+            } else {
+                return false;
+            }
+        } else if ( destination1.y <= 1 ) {
+            if ( destination2.y > 0 ) {
+                vec3 radius(destination1.x, 0 , destination1.z);
+                vec3 tangent = cross(radius, destination1);
+                temp_norm = normalize(cross(destination1, tangent));
+                if ( temp_norm.y > 0 ) {
+                    temp_norm = - temp_norm;
+                }
+                final_t = t1;
+                result = true;
+            } else {
+                float new_t = (1 - ray.origin.y) / ray.direction.y;
+                vec3 cap_intersection = ray.origin + new_t * ray.direction;
+                if ( cap_intersection.x >= -1 && cap_intersection.x <= 1 && cap_intersection.z >= -1 && cap_intersection.z <= 1) {
+                    final_t = new_t;
+                    result = true;
+                    temp_norm = vec3(0, 1, 0);
+                }
+            }
+
+        } else {
+           if ( destination2.y > 1 ) {
+                return false;
+            } else if ( destination2.y > 0 ){
+                float new_t = (1 - ray.origin.y) / ray.direction.y;
+                vec3 cap_intersection = ray.origin + new_t * ray.direction;
+                if ( cap_intersection.x >= -1 && cap_intersection.x <= 1 && cap_intersection.z >= -1 && cap_intersection.z <= 1) {
+                    final_t = new_t;
+                    result = true;
+                    temp_norm = vec3(0, 1, 0);
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    if ( result && final_t > EPSILON && final_t < min_length ) {
+        intersection.hit_point = ray.origin + final_t * ray.direction;
+        intersection.normal = temp_norm;
+        min_length = final_t;
+        return true;
+    }
+    return false;
+}
