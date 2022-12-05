@@ -20,24 +20,24 @@ Mesh::Mesh( const std::string& fname )
 	
 	//std::string test = "test.txt";
 	std::ifstream ifs( fname.c_str() );
-	double x_max = std::numeric_limits<double>::min();
-	double y_max = std::numeric_limits<double>::min();
-	double z_max = std::numeric_limits<double>::min();
-	double x_min = std::numeric_limits<double>::max();
-	double y_min = std::numeric_limits<double>::max();
-	double z_min = std::numeric_limits<double>::max();
+	double x_max_tmp = std::numeric_limits<double>::min();
+	double y_max_tmp = std::numeric_limits<double>::min();
+	double z_max_tmp = std::numeric_limits<double>::min();
+	double x_min_tmp = std::numeric_limits<double>::max();
+	double y_min_tmp = std::numeric_limits<double>::max();
+	double z_min_tmp = std::numeric_limits<double>::max();
 	//double radius = 0;
 
 	while( ifs >> code ) {
 		
 		if( code == "v" ) {
 			ifs >> vx >> vy >> vz;
-			x_max = std::max(vx, x_max);
-			x_min = std::min(vx, x_min);
-			y_max = std::max(vy, y_max);
-			y_min = std::min(vy, y_min);
-			z_max = std::max(vz, z_max);
-			z_min = std::min(vz, z_min);
+			x_max_tmp = std::max(vx, x_max_tmp);
+			x_min_tmp = std::min(vx, x_min_tmp);
+			y_max_tmp = std::max(vy, y_max_tmp);
+			y_min_tmp = std::min(vy, y_min_tmp);
+			z_max_tmp = std::max(vz, z_max_tmp);
+			z_min_tmp = std::min(vz, z_min_tmp);
 			//radius = std::max()
 			m_vertices.push_back( glm::vec3( vx, vy, vz ) );
 		} else if( code == "f" ) {
@@ -46,6 +46,13 @@ Mesh::Mesh( const std::string& fname )
 		}
 	}
 	
+	x_max = x_max_tmp;
+	x_min = x_min_tmp;
+	y_max = y_max_tmp;
+	y_min = y_min_tmp;
+	z_max = z_max_tmp;
+	z_min = z_min_tmp;
+
 	//vec3 center = vec3((x_max + x_min) / 2, (y_max + y_min) / 2, (z_max + z_min) / 2);
 	double radius = sqrt(pow((x_max - x_min) / 2, 2) + pow((y_max - y_min) / 2, 2) + pow((z_max - z_min) / 2, 2));
 	radius *= 1.000001;

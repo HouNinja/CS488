@@ -13,6 +13,12 @@ bool Primitive::hit(Ray ray, Intersection & intersection, float & ray_length) {
 }
 
 Sphere::Sphere() {
+    x_max = 1;
+    x_min = -1;
+    y_max = 1;
+    y_min = -1;
+    z_max = 1;
+    z_min = -1;
     nonhiersphere = new NonhierSphere(vec3(0.0, 0.0, 0.0), 1.0);
 }
 
@@ -25,6 +31,12 @@ bool Sphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
 }
 
 Cube::Cube() {
+    x_max = 1;
+    x_min = 0;
+    y_max = 1;
+    y_min = 0;
+    z_max = 1;
+    z_min = 0;
     nonhiercube = new NonhierBox(vec3(0.0, 0.0, 0.0), 1.0);
 }
 
@@ -248,7 +260,14 @@ bool NonhierBox::hit(Ray ray, Intersection & intersection, float & ray_length) {
     return result;
 }
 
-Cylinder::Cylinder() {}
+Cylinder::Cylinder() {
+      x_max = 1;
+      x_min = -1;
+      y_max = 1;
+      y_min = -1;
+      z_max = 1;
+      z_min = -1;
+}
 Cylinder::~Cylinder() {}
 
 bool Cylinder::hit(Ray ray, Intersection & intersection, float & min_length) {
@@ -321,7 +340,14 @@ bool Cylinder::hit(Ray ray, Intersection & intersection, float & min_length) {
 }
 
 
-Cone::Cone() {}
+Cone::Cone() {
+    x_max = 1;
+      x_min = -1;
+      y_max = 1;
+      y_min = 0;
+      z_max = 1;
+      z_min = -1;
+}
 Cone::~Cone() {}
 
 bool Cone::hit(Ray ray, Intersection & intersection, float & min_length) {

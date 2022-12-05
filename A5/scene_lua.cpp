@@ -436,6 +436,12 @@ int gr_texture_cmd(lua_State* L)
     get_tuple(L, 3, color2, 3);
     data->texture = new CheckerTexture(glm::vec3(color1[0], color1[1], color1[2]),
                                      glm::vec3(color2[0], color2[1], color2[2]));
+  } else if (id == 2) {
+    double color1[3], color2[3];
+    get_tuple(L, 2, color1, 3);
+    get_tuple(L, 3, color2, 3);
+    data->texture = new PerlinNoise(glm::vec3(color1[0], color1[1], color1[2]),
+                                     glm::vec3(color2[0], color2[1], color2[2]));
   }
 
   //std::cout << coef_reflection << std::endl;

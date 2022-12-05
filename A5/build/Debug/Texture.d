@@ -72,7 +72,10 @@ Debug/Texture.o: ../Texture.cpp ../../shared/include/glm/glm.hpp \
  ../../shared/include/glm/vector_relational.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
- ../../shared/include/glm/detail/func_integer.inl ../Texture.hpp
+ ../../shared/include/glm/detail/func_integer.inl \
+ ../../shared/include/glm/gtc/noise.hpp \
+ ../../shared/include/glm/gtc/../detail/_noise.hpp \
+ ../../shared/include/glm/gtc/noise.inl ../Texture.hpp
 
 ../../shared/include/glm/glm.hpp:
 
@@ -223,5 +226,11 @@ Debug/Texture.o: ../Texture.cpp ../../shared/include/glm/glm.hpp \
 ../../shared/include/glm/detail/func_integer.hpp:
 
 ../../shared/include/glm/detail/func_integer.inl:
+
+../../shared/include/glm/gtc/noise.hpp:
+
+../../shared/include/glm/gtc/../detail/_noise.hpp:
+
+../../shared/include/glm/gtc/noise.inl:
 
 ../Texture.hpp:

@@ -8,6 +8,9 @@ mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1.0, 1.0, 1.0)
 mat5 = gr.material({0.9, 0.9, 0.9}, {0.5, 0.7, 0.5}, 25, 1.0, 1.0, 1.0)
 
 tex1 = gr.texture(1, {0.7, 1.0, 0.7}, {1.0, 0.7, 0.7})
+marble = gr.texture(2, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0})
+flame = gr.texture(2, {1.0, 0.2, 0.2}, {1.0, 1.0, 0.3})
+
 scene_root = gr.node('root')
 
 --s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
@@ -19,19 +22,38 @@ scene_root = gr.node('root')
 --s2:set_material(mat5)
 --s2:set_texture(tex1)
 
-s2 = gr.nh_sphere('s2', {25, 0, 0}, 15)
+s2 = gr.nh_sphere('s2', {1.5, 0, 0.5}, 1)
 scene_root:add_child(s2)
 s2:set_material(mat5)
-s2:set_texture(tex1)
+s2:set_texture(flame)
+
+c1 = gr.cylinder('c1')
+scene_root:add_child(c1)
+c1:rotate('X', 45)
+c1:rotate('Z', 45)
+c1:translate(-1.2, -1.0, 0.0)
+
+c1:set_material(mat5)
+c1:set_texture(marble)
 
 
 
-b1 = gr.nh_box('b1', {-20, -20, 5}, 10)
-b1:rotate('X', 15)
-b1:rotate('Y', -15)
-scene_root:add_child(b1)
-b1:set_material(mat4)
-b1:set_texture(tex1)
+c2 = gr.cone('c2')
+scene_root:add_child(c2)
+c2:scale(1.0, 3.0, 1.0)
+c2:rotate('X', -45)
+c2:rotate('Z', 45)
+c2:translate(-1.2, 1.0, 0.0)
+c2:set_material(mat5)
+c2:set_texture(marble)
+
+
+--b1 = gr.nh_box('b1', {-20, -20, 5}, 10)
+--b1:rotate('X', 15)
+--b1:rotate('Y', -15)
+--scene_root:add_child(b1)
+--b1:set_material(mat4)
+--b1:set_texture(tex1)
 --s3 = gr.nh_sphere('s3', {0, -1200, -500}, 1000)
 --scene_root:add_child(s3)
 --s3:set_material(mat2)
@@ -59,5 +81,5 @@ white_light = gr.light({-20.0, 0.0, 300.0}, {0.6, 0.6, 0.6}, {1, 0, 0})
 magenta_light = gr.light({100.0, -50.0, 100.0}, {0.6, 0.6, 0.6}, {1, 0, 0})
 
 gr.render(scene_root, 'improve_reflection.png', 512, 512,
-	  {0, 0, 100}, {0, 0, -1}, {0, 1, 0}, 50,
+	  {0, 0, 7}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})

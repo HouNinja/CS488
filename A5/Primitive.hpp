@@ -8,6 +8,13 @@
 
 class Primitive {
 public:
+  float x_max = 1;
+  float x_min = 0;
+  float y_max = 1;
+  float y_min = 0;
+  float z_max = 1;
+  float z_min = 0;
+
   virtual ~Primitive();
   virtual bool hit(Ray ray, Intersection & intersection, float & ray_length);
 };
@@ -31,7 +38,13 @@ public:
 class NonhierSphere : public Primitive {
 public:
   NonhierSphere(const glm::vec3& pos, double radius)
-    : m_pos(pos), m_radius(radius) {}
+    : m_pos(pos), m_radius(radius) { 
+    x_max = pos.x + radius;
+    x_min = pos.x - radius;
+    y_max = pos.y + radius;
+    y_min = pos.y - radius;
+    z_max = pos.z + radius;
+    z_min = pos.z - radius; }
   virtual ~NonhierSphere();
   virtual bool hit(Ray ray, Intersection & intersection, float & ray_length) override;
   double Get_radius();
@@ -44,7 +57,14 @@ private:
 class NonhierBox : public Primitive {
 public:
   NonhierBox(const glm::vec3& pos, double size)
-    : m_pos(pos), m_size(size) {}
+    : m_pos(pos), m_size(size) {
+      x_max = pos.x + size;
+      x_min = pos.x;
+      y_max = pos.y + size;
+      y_min = pos.y;
+      z_max = pos.z + size;
+      z_min = pos.z;
+    }
   virtual ~NonhierBox();
   virtual bool hit(Ray ray, Intersection & intersection, float & min_length) override;
 private:

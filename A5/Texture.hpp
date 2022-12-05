@@ -25,3 +25,14 @@ class CheckerTexture : public Texture {
     vec3 get_color(float u, float v) override;
     vec3 get_color_3D(float u, float v, float w) override;
 };
+
+
+class PerlinNoise : public Texture {
+    public:
+    vec3 color1;
+    vec3 color2;
+    PerlinNoise(vec3 c1, vec3 c2);
+    virtual ~PerlinNoise();
+    vec3 get_color(float u, float v) override;
+    vec3 get_color_3D(float u, float v, float w) override;
+};

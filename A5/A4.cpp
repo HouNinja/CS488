@@ -61,12 +61,8 @@ vec3 trace_ray(
 		double shininess = material->Get_shininess();
 
 		if ( intersection.texture != nullptr) {
-			if (intersection.texture->texture_id == 1) {
-				CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
-				kd = intersection.texture_color;
-				//kd = texture->get_color_3D(intersection.hit_point.x, intersection.hit_point.y, intersection.hit_point.z);
-				//std::cout << to_string(intersection.texture_color) << "    " << to_string(kd) << std::endl;
-			}
+			kd = intersection.texture_color;
+			//std::cout << to_string(kd) << std::endl;
 		}
 		// Ambient light for all hits.
 		final_color += ambient * kd;
@@ -135,7 +131,7 @@ vec3 trace_ray(
 				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
 				Ray reflected_ray = Ray(intersection.hit_point + EPSILON * N, reflected_direction);
-				float reflection = 0.3;
+				float reflection = 0.0;
 				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
 
 				if ( reflected.g != reflected.g) {

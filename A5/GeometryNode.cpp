@@ -59,9 +59,17 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 		intersection.material = m_material;
 		intersection.texture = m_texture;
 		if ( m_texture != nullptr ) {
-			CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
-			//kd = intersection.texture_color;
-			intersection.texture_color = texture->get_color_3D(intersection.hit_point.x, intersection.hit_point.y, intersection.hit_point.z);
+			if ( m_texture->texture_id == 1 ) {
+				CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
+				intersection.texture_color = texture->get_color_3D(intersection.hit_point.x, intersection.hit_point.y, intersection.hit_point.z);
+			} else if ( m_texture->texture_id == 2 ) {
+				PerlinNoise * texture = static_cast<PerlinNoise *>(intersection.texture);
+				float x_difference = m_primitive->x_max - m_primitive->x_min;
+				float y_difference = m_primitive->y_max - m_primitive->y_min;
+				float z_difference = m_primitive->z_max - m_primitive->z_min;
+				intersection.texture_color = texture->get_color_3D(intersection.hit_point.x /x_difference, intersection.hit_point.y / y_difference, intersection.hit_point.z / z_difference);
+			}
+			
 		}
 		result = true;
 	}
