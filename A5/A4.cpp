@@ -14,7 +14,7 @@ using namespace glm;
 float randf() {
 	float x;
 	x = rand() / RAND_MAX;
-	float y = rand() % 2;
+	int y = rand() % 2;
 	if ( y ) {
 		x = -x;
 	}
@@ -59,7 +59,11 @@ vec3 trace_ray(
 		//std::cout << kd.x << " kd" << kd.y << " " << kd.z << std::endl;
 		for (Light * light : lights) {
 			//could potentially generate error here
+			float soft_shadow_coef = 1.0f;
+			double r, attenuation;
+
 			Ray lightray(intersection.hit_point, light->position - intersection.hit_point);
+			#ifndef ENABLE_SOFT_SHADOW
 			Intersection light_intersection;
 			float max_t = std::numeric_limits<float>::max();
 			if ( root->hit(lightray, light_intersection, max_t) ) {
@@ -67,9 +71,29 @@ vec3 trace_ray(
 				//std::cout << max_t << std::endl;
 				continue;
 			}
+			#endif
 
-			double r = length(lightray.Get_direction());
-			double attenuation = 1.0 / (light->falloff[0] + light->falloff[1] * r + light->falloff[2] * r * r);
+			#ifdef ENABLE_SOFT_SHADOW
+			int num_lights = 20;
+			int num_blocked = 0;
+			attenuation = 0;
+			for(int i = 0; i < num_lights; ++i) {
+				vec3 light_center = light->position;
+				vec3 new_light = vec3(light_center.x + (rand_float() - 0.5f) * 30, 
+										light_center.y + (rand_float() - 0.5f) * 30,
+										light_center.z + (rand_float() - 0.5f) * 30);
+				Ray new_lightray(intersection.hit_point, new_light - intersection.hit_point);
+				Intersection light_intersection;
+				float max_t = std::numeric_limits<float>::max();
+				if ( root->hit(new_lightray, light_intersection, max_t) ) {
+					num_blocked++;
+				}
+			}
+			soft_shadow_coef = 1.0f * (num_lights - num_blocked) / num_lights;
+			#endif
+
+			r = length(lightray.Get_direction());
+			attenuation = 1.0 / (light->falloff[0] + light->falloff[1] * r + light->falloff[2] * r * r);
 			
 			vec3 L = normalize(lightray.Get_direction());
 			vec3 N = normalize(intersection.normal);
@@ -80,12 +104,12 @@ vec3 trace_ray(
 			//vec3 temp = attenuation * dot(L, N) * kd * light->colour;
 			//std::cout << temp.x << " " << temp.y << " " << temp.z << std::endl;
 			if ( attenuation * dot(L, N) > EPSILON ) {
-				final_color += attenuation * dot(L, N) * kd * light->colour;
+				final_color += soft_shadow_coef * attenuation * dot(L, N) * kd * light->colour;
 			}
 			//specular
 			//std::cout << R.x << R.y << R.z<< V.x << V.y << V.z << std::endl;
 			if ( attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) > EPSILON ) {
-				final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
+				final_color += soft_shadow_coef * attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			}
 			//final_color += attenuation * pow(glm::max(0.0f, dot(R,V)), shininess) * ks * light->colour;
 			//std::cout << dot(R, V) << std::endl;
@@ -94,7 +118,7 @@ vec3 trace_ray(
 				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
 				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
-				float reflection = 0.3;
+				float reflection = 0.15;
 				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
 
 				/*if ( reflected.g != reflected.g) {
