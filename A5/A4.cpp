@@ -9,6 +9,26 @@ using namespace glm;
 #include "PhongMaterial.hpp"
 #include <iostream>
 
+//randf() generate a random number from -1 to 1;
+
+float randf() {
+	float x;
+	x = rand() / RAND_MAX;
+	float y = rand() % 2;
+	if ( y ) {
+		x = -x;
+	}
+	return x;
+}
+
+float rand_float() {
+    float x;
+    do {
+        x = (float) rand() / (RAND_MAX);
+    } while (x == 1);
+    return x;
+}
+
 vec3 trace_ray(
 	Ray ray,
 	SceneNode * root,
@@ -73,9 +93,10 @@ vec3 trace_ray(
 			if ( n_hits > 0 ) {
 				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
-				Ray reflected_ray = Ray(intersection.hit_point + 2 * EPSILON * N, reflected_direction);
-				float reflection = 0.15;
+				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
+				float reflection = 0.3;
 				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
+
 				/*if ( reflected.g != reflected.g) {
 					std::cout << "reach here" << std::endl;
 					vec3 temp = intersection.hit_point;
@@ -87,6 +108,27 @@ vec3 trace_ray(
 					//std::cout << "sin1: " << sin_theta1 << "sin2 " << sin_theta2 << "hits" << n_hits << std::endl;
 					//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << "hits" << n_hits << std::endl;
 				}*/
+
+				#ifdef ENABLE_GLOSSY_REFLECTION
+				vec3 reflected_direction_unit = normalize(reflected_direction);
+				vec3 unit_u = cross(reflected_direction_unit, N);
+				vec3 unit_v = cross( unit_u, reflected_direction_unit);
+				float glossy_radius = 0.2f;
+				
+				//std::cout << "reflected before "<< to_string(reflected) << std::endl;
+				reflected = reflected / 9;
+				for (int i = 0; i < 8; ++i) {
+					
+					float u = -glossy_radius / 2 + rand_float() * glossy_radius;
+					float v = -glossy_radius / 2 + rand_float() * glossy_radius;
+					vec3 glossy_direction = reflected_direction_unit + u * unit_u + v * unit_v;
+					Ray glossy_reflected_ray(intersection.hit_point, glossy_direction);
+					float cos = dot(normalize(glossy_direction), reflected_direction_unit);
+					//std::cout << to_string(glossy_direction) << "     " << to_string(reflected_direction_unit) << std::endl;
+					reflected += cos * trace_ray(glossy_reflected_ray, root, eye, ambient, lights, n_hits - 1) / 9;
+				}
+				//std::cout << "reflected after "<< to_string(reflected) << std::endl;
+				#endif
 
 
 				
@@ -106,7 +148,7 @@ vec3 trace_ray(
 				vec3 difference = normalize(ray.Get_direction() - projection);
 				vec3 refracted_direction = projection + (length(ray.Get_direction()) * cosine_theta1 / cos_theta2 * sin_theta2) * difference;
 				Ray refracted_ray = Ray(intersection.hit_point  - 2 * EPSILON * N , refracted_direction);
-				float refraction = 0.10;
+				float refraction = 0.0;
 
 				vec3 refracted = trace_ray(refracted_ray, root, eye, ambient, lights, n_hits - 1);
 				//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << std::endl;
@@ -190,7 +232,7 @@ void A4_Render(
 	float distance = h / 2 / glm::tan(glm::radians(fovy / 2));
 	//distance = distance / 4;
 	vec3 Top_Left_corner = distance * unit_z - unit_x * (float)w / 2 - unit_y * (float)h / 2;
-
+	srand(0);
  	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
