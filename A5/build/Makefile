@@ -77,6 +77,7 @@ OBJECTS := \
 	$(OBJDIR)/PhongMaterial.o \
 	$(OBJDIR)/JointNode.o \
 	$(OBJDIR)/Ray.o \
+	$(OBJDIR)/Texture.o \
 	$(OBJDIR)/SceneNode.o \
 
 RESOURCES := \
@@ -175,6 +176,9 @@ $(OBJDIR)/JointNode.o: ../JointNode.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/Ray.o: ../Ray.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/Texture.o: ../Texture.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/SceneNode.o: ../SceneNode.cpp

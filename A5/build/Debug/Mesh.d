@@ -217,7 +217,7 @@ Debug/Mesh.o: ../Mesh.cpp ../../shared/include/glm/ext.hpp \
  ../../shared/include/glm/./gtx/simd_mat4.inl \
  ../../shared/cs488-framework/ObjFileDecoder.hpp ../Mesh.hpp \
  ../Primitive.hpp ../Ray.hpp ../Light.hpp ../Image.hpp \
- ../Intersection.hpp ../Material.hpp
+ ../Intersection.hpp ../Material.hpp ../Texture.hpp
 
 ../../shared/include/glm/ext.hpp:
 
@@ -668,3 +668,5 @@ Debug/Mesh.o: ../Mesh.cpp ../../shared/include/glm/ext.hpp \
 ../Intersection.hpp:
 
 ../Material.hpp:
+
+../Texture.hpp:

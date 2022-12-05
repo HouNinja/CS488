@@ -74,7 +74,8 @@ Debug/Primitive.o: ../Primitive.cpp ../Primitive.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
  ../../shared/include/glm/detail/func_integer.inl ../Ray.hpp ../Light.hpp \
- ../Image.hpp ../Intersection.hpp ../Material.hpp ../polyroots.hpp
+ ../Image.hpp ../Intersection.hpp ../Material.hpp ../Texture.hpp \
+ ../polyroots.hpp
 
 ../Primitive.hpp:
 
@@ -237,5 +238,7 @@ Debug/Primitive.o: ../Primitive.cpp ../Primitive.hpp \
 ../Intersection.hpp:
 
 ../Material.hpp:
+
+../Texture.hpp:
 
 ../polyroots.hpp:

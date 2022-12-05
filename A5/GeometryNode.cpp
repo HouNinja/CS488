@@ -9,10 +9,11 @@ using namespace glm;
 
 //---------------------------------------------------------------------------------------
 GeometryNode::GeometryNode(
-	const std::string & name, Primitive *prim, Material *mat )
+	const std::string & name, Primitive *prim, Material *mat, Texture *tex )
 	: SceneNode( name )
 	, m_material( mat )
 	, m_primitive( prim )
+	, m_texture( tex )
 {
 	m_nodeType = NodeType::GeometryNode;
 }
@@ -33,6 +34,11 @@ void GeometryNode::setMaterial( Material *mat )
 	m_material = mat;
 }
 
+void GeometryNode::setTexture( Texture *tex )
+{
+	m_texture = tex;
+}
+
 bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 	Ray temp_ray;
 	temp_ray.Set_origin(vec3(invtrans * vec4(ray.Get_origin(), 1.0f)));
@@ -51,6 +57,12 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 	if ( m_primitive->hit(temp_ray, intersection, ray_t) ) {
 		//std::cout << " reach here"<< std::endl
 		intersection.material = m_material;
+		intersection.texture = m_texture;
+		if ( m_texture != nullptr ) {
+			CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
+			//kd = intersection.texture_color;
+			intersection.texture_color = texture->get_color_3D(intersection.hit_point.x, intersection.hit_point.y, intersection.hit_point.z);
+		}
 		result = true;
 	}
 	if ( result ) {

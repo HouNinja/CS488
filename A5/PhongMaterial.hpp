@@ -18,7 +18,7 @@ public:
   double coef_reflection();
   double coef_refraction();
   double refraction_factor();
-
+  void set_kd(glm::vec3 new_kd);
 private:
   glm::vec3 m_kd;
   glm::vec3 m_ks;

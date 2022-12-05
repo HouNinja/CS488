@@ -55,6 +55,11 @@
 #include "Primitive.hpp"
 #include "Material.hpp"
 #include "PhongMaterial.hpp"
+
+#ifndef TEXTURE
+#include "Texture.hpp"
+#endif
+
 #include "A4.hpp"
 
 typedef std::map<std::string,Mesh*> MeshMap;
@@ -94,6 +99,10 @@ struct gr_node_ud {
 // allocated by Lua to represent materials.
 struct gr_material_ud {
   Material* material;
+};
+
+struct gr_texture_ud {
+  Texture* texture;
 };
 
 // The "userdata" type for a light. Objects of this type will be
@@ -413,6 +422,31 @@ int gr_material_cmd(lua_State* L)
   return 1;
 }
 
+int gr_texture_cmd(lua_State* L)
+{
+  GRLUA_DEBUG_CALL;
+  
+  gr_texture_ud* data = (gr_texture_ud*)lua_newuserdata(L, sizeof(gr_texture_ud));
+  data->texture = 0;
+  int id = std::round(luaL_checknumber(L, 1));
+
+  if (id == 1) {
+    double color1[3], color2[3];
+    get_tuple(L, 2, color1, 3);
+    get_tuple(L, 3, color2, 3);
+    data->texture = new CheckerTexture(glm::vec3(color1[0], color1[1], color1[2]),
+                                     glm::vec3(color2[0], color2[1], color2[2]));
+  }
+
+  //std::cout << coef_reflection << std::endl;
+  luaL_newmetatable(L, "gr.texture");
+  lua_setmetatable(L, -2);
+  
+  return 1;
+}
+
+extern "C"
+
 // Add a Child to a node
 extern "C"
 int gr_node_add_child_cmd(lua_State* L)
@@ -453,6 +487,28 @@ int gr_node_set_material_cmd(lua_State* L)
   Material* material = matdata->material;
 
   self->setMaterial(material);
+
+  return 0;
+}
+
+extern "C"
+int gr_node_set_texture_cmd(lua_State* L)
+{
+  GRLUA_DEBUG_CALL;
+  
+  gr_node_ud* selfdata = (gr_node_ud*)luaL_checkudata(L, 1, "gr.node");
+  luaL_argcheck(L, selfdata != 0, 1, "Node expected");
+
+  GeometryNode* self = dynamic_cast<GeometryNode*>(selfdata->node);
+
+  luaL_argcheck(L, self != 0, 1, "Geometry node expected");
+  
+  gr_texture_ud* texdata = (gr_texture_ud*)luaL_checkudata(L, 2, "gr.texture");
+  luaL_argcheck(L, texdata != 0, 2, "texture expected");
+
+  Texture* texture = texdata->texture;
+
+  self->setTexture(texture);
 
   return 0;
 }
@@ -563,6 +619,7 @@ static const luaL_Reg grlib_functions[] = {
   {"mesh", gr_mesh_cmd},
   {"cylinder", gr_cylinder_cmd},
   {"cone", gr_cone_cmd},
+  {"texture", gr_texture_cmd},
   {"light", gr_light_cmd},
   {"render", gr_render_cmd},
   {0, 0}
@@ -584,6 +641,7 @@ static const luaL_Reg grlib_node_methods[] = {
   {"__gc", gr_node_gc_cmd},
   {"add_child", gr_node_add_child_cmd},
   {"set_material", gr_node_set_material_cmd},
+  {"set_texture", gr_node_set_texture_cmd},
   {"scale", gr_node_scale_cmd},
   {"rotate", gr_node_rotate_cmd},
   {"translate", gr_node_translate_cmd},

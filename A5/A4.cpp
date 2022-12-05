@@ -45,8 +45,13 @@ vec3 trace_ray(
 		if ( intersection.material == nullptr) {
 			std::cout << " material missing" << std::endl;
 		}
-		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
 
+		if ( intersection.texture == nullptr) {
+			std::cout << " texture missing" << std::endl;
+		}
+
+		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);
+		
 		/*if ( material->coef_reflection() != 0 ) {
 			std::cout << material->coef_reflection() << " data has been read " << material->Get_shininess() << std::endl;
 		}*/
@@ -54,6 +59,15 @@ vec3 trace_ray(
 		vec3 kd = material->Get_kd();
 		vec3 ks = material->Get_ks();
 		double shininess = material->Get_shininess();
+
+		if ( intersection.texture != nullptr) {
+			if (intersection.texture->texture_id == 1) {
+				CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
+				kd = intersection.texture_color;
+				//kd = texture->get_color_3D(intersection.hit_point.x, intersection.hit_point.y, intersection.hit_point.z);
+				//std::cout << to_string(intersection.texture_color) << "    " << to_string(kd) << std::endl;
+			}
+		}
 		// Ambient light for all hits.
 		final_color += ambient * kd;
 		//std::cout << kd.x << " kd" << kd.y << " " << kd.z << std::endl;
@@ -90,6 +104,9 @@ vec3 trace_ray(
 				}
 			}
 			soft_shadow_coef = 1.0f * (num_lights - num_blocked) / num_lights;
+			/*if ( soft_shadow_coef < 0.1f ) {
+				std::cout << " reach here: " << num_blocked << std::endl;
+			}*/
 			#endif
 
 			r = length(lightray.Get_direction());
@@ -117,11 +134,11 @@ vec3 trace_ray(
 			if ( n_hits > 0 ) {
 				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
-				Ray reflected_ray = Ray(intersection.hit_point, reflected_direction);
-				float reflection = 0.15;
+				Ray reflected_ray = Ray(intersection.hit_point + EPSILON * N, reflected_direction);
+				float reflection = 0.3;
 				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
 
-				/*if ( reflected.g != reflected.g) {
+				if ( reflected.g != reflected.g) {
 					std::cout << "reach here" << std::endl;
 					vec3 temp = intersection.hit_point;
 					std::cout << N.x << N.y << N.z << std::endl;
@@ -131,7 +148,7 @@ vec3 trace_ray(
 					std::cout << "reflected: " << reflected.r << " " << reflected.g << " " << reflected.b << std::endl;
 					//std::cout << "sin1: " << sin_theta1 << "sin2 " << sin_theta2 << "hits" << n_hits << std::endl;
 					//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << "hits" << n_hits << std::endl;
-				}*/
+				}
 
 				#ifdef ENABLE_GLOSSY_REFLECTION
 				vec3 reflected_direction_unit = normalize(reflected_direction);

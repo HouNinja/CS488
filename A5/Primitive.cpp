@@ -44,7 +44,7 @@ double NonhierSphere::Get_radius() {
 
 bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length) {
     // If there exists a hit point: dot(origin + t * direction - m_mos) = radius ^ 2;
-    const float EPSILON = 0.0000005;
+    const float EPSILON = 0.000001;
     vec3 temp = ray.Get_origin() - m_pos;
     double A = dot(ray.Get_direction(), ray.Get_direction());
     double B = 2 * dot(ray.Get_direction(), temp);
@@ -71,7 +71,7 @@ bool NonhierSphere::hit(Ray ray, Intersection & intersection, float & ray_length
     //std::cout << new_t << std::endl;
     if ( new_t < ray_length && new_t > EPSILON) {
         ray_length = new_t - EPSILON;
-        intersection.hit_point = ray.Get_origin() + (ray_length - 3 * EPSILON) * ray.Get_direction();
+        intersection.hit_point = ray.Get_origin() + (ray_length - 10 * EPSILON) * ray.Get_direction();
         intersection.normal = intersection.hit_point - m_pos;
         //intersection.material = nonhiersphere.material
         return true;

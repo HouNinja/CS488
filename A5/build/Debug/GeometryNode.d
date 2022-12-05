@@ -74,7 +74,7 @@ Debug/GeometryNode.o: ../GeometryNode.cpp ../GeometryNode.hpp \
  ../../shared/include/glm/integer.hpp \
  ../../shared/include/glm/detail/func_integer.hpp \
  ../../shared/include/glm/detail/func_integer.inl ../Ray.hpp ../Light.hpp \
- ../Image.hpp ../Intersection.hpp ../Primitive.hpp \
+ ../Image.hpp ../Intersection.hpp ../Texture.hpp ../Primitive.hpp \
  ../../shared/include/glm/ext.hpp \
  ../../shared/include/glm/./gtc/bitfield.hpp \
  ../../shared/include/glm/./gtc/bitfield.inl \
@@ -381,6 +381,8 @@ Debug/GeometryNode.o: ../GeometryNode.cpp ../GeometryNode.hpp \
 ../Image.hpp:
 
 ../Intersection.hpp:
+
+../Texture.hpp:
 
 ../Primitive.hpp:
 

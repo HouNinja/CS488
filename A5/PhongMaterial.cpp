@@ -53,3 +53,8 @@ double PhongMaterial::coef_refraction() {
 double PhongMaterial::refraction_factor() {
 	return m_refraction_factor;
 }
+
+void PhongMaterial::set_kd(glm::vec3 new_kd) {
+	m_kd = new_kd;
+	return;
+}
