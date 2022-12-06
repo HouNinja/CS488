@@ -131,7 +131,7 @@ vec3 trace_ray(
 				//reflection
 				vec3 reflected_direction = (2 * dot(V,N) * N - V) * 50;
 				Ray reflected_ray = Ray(intersection.hit_point + EPSILON * N, reflected_direction);
-				float reflection = 0.0;
+				float reflection = material->coef_reflection();
 				vec3 reflected = trace_ray(reflected_ray, root, eye, ambient, lights, n_hits - 1);
 
 				if ( reflected.g != reflected.g) {
@@ -185,7 +185,7 @@ vec3 trace_ray(
 				vec3 difference = normalize(ray.Get_direction() - projection);
 				vec3 refracted_direction = projection + (length(ray.Get_direction()) * cosine_theta1 / cos_theta2 * sin_theta2) * difference;
 				Ray refracted_ray = Ray(intersection.hit_point  - 2 * EPSILON * N , refracted_direction);
-				float refraction = 0.0;
+				float refraction = material->coef_refraction();
 
 				vec3 refracted = trace_ray(refracted_ray, root, eye, ambient, lights, n_hits - 1);
 				//std::cout << "cos1: " << cosine_theta1 << "cos2 " << cos_theta2 << std::endl;
@@ -271,7 +271,9 @@ void A4_Render(
 	vec3 Top_Left_corner = distance * unit_z - unit_x * (float)w / 2 - unit_y * (float)h / 2;
 	srand(0);
  	for (uint y = 0; y < h; ++y) {
+		std::cout << "y: " << y << std::endl;
 		for (uint x = 0; x < w; ++x) {
+			std::cout << "x: " << x << std::endl;
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
 			vec3 color = trace_ray(ray, root, eye, ambient, lights, 2);
@@ -286,7 +288,7 @@ void A4_Render(
 					} else {
 						const vec3 temp_direction = Top_Left_corner + x * unit_x + y * unit_y + i * unit_x / 2.0 + j * unit_y / 2.0;
 						Ray temp_ray = Ray(eye, temp_direction);
-						final_color += trace_ray(temp_ray, root, eye, ambient, lights, 3);
+						final_color += trace_ray(temp_ray, root, eye, ambient, lights, 1);
 					}
 				}
 			}
