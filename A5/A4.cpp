@@ -47,7 +47,7 @@ vec3 trace_ray(
 		}
 
 		if ( intersection.texture == nullptr) {
-			std::cout << " texture missing" << std::endl;
+			//std::cout << " texture missing" << std::endl;
 		}
 
 		PhongMaterial * material = static_cast<PhongMaterial *>(intersection.material);

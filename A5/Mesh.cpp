@@ -7,6 +7,7 @@
 
 #include "cs488-framework/ObjFileDecoder.hpp"
 #include "Mesh.hpp"
+#include "Options.hpp"
 
 using namespace glm;
 
@@ -27,6 +28,7 @@ Mesh::Mesh( const std::string& fname )
 	double y_min_tmp = std::numeric_limits<double>::max();
 	double z_min_tmp = std::numeric_limits<double>::max();
 	//double radius = 0;
+#ifndef PHONG_SHADING
 
 	while( ifs >> code ) {
 		
@@ -45,6 +47,36 @@ Mesh::Mesh( const std::string& fname )
 			m_faces.push_back( Triangle( s1 - 1, s2 - 1, s3 - 1 ) );
 		}
 	}
+
+#endif
+
+#ifdef PHONG_SHADING
+	char c;
+	double n1, n2, n3;
+	while( ifs >> code ) {
+		
+		if( code == "v" ) {
+			ifs >> vx >> vy >> vz;
+			x_max_tmp = std::max(vx, x_max_tmp);
+			x_min_tmp = std::min(vx, x_min_tmp);
+			y_max_tmp = std::max(vy, y_max_tmp);
+			y_min_tmp = std::min(vy, y_min_tmp);
+			z_max_tmp = std::max(vz, z_max_tmp);
+			z_min_tmp = std::min(vz, z_min_tmp);
+			//radius = std::max()
+			m_vertices.push_back( glm::vec3( vx, vy, vz ) );
+		} else if ( code == "vn") {
+			ifs >> vx >> vy >> vz;
+			m_normal.push_back( glm::vec3 (vx, vy, vz) );
+		} else if( code == "f" ) {
+			ifs >> s1 >> c >> c >> n1;
+			ifs >> s2 >> c >> c >> n2;
+			ifs >> s3 >> c >> c >> n3;
+			m_faces.push_back( Triangle( s1 - 1, s2 - 1, s3 - 1, n1 - 1, n2 - 1, n3 - 1 ) );
+		}
+	}
+
+#endif
 	
 	x_max = x_max_tmp;
 	x_min = x_min_tmp;
@@ -131,6 +163,11 @@ vec3 r_n(vec3 direction, vec3 prev_normal) {
     return prev_normal;
 }
 
+float triangle_area(vec3 v1, vec3 v2, vec3 v3) {
+	return length(cross(v3 - v1, v3 - v2)) / 2.0;
+}
+
+
 bool Mesh::hit(Ray ray, Intersection & intersection, float & ray_length) {
 	bool result = false;
 	NonhierSphere * address = static_cast<NonhierSphere *>(bounding_sphere);
@@ -158,6 +195,16 @@ bool Mesh::hit(Ray ray, Intersection & intersection, float & ray_length) {
 			intersection.hit_point = ray.Get_origin() + ray_length * ray.Get_direction();
 			vec3 prev_normal = cross(m_vertices[triangle.v2] - m_vertices[triangle.v1], m_vertices[triangle.v3] - m_vertices[triangle.v1]);
 			intersection.normal = r_n(ray.Get_direction(), prev_normal);
+			#ifdef PHONG_SHADING
+			std::cout << "before:" << to_string(normalize(intersection.normal));
+			float alpha = triangle_area(m_vertices[triangle.v2], m_vertices[triangle.v3], intersection.hit_point) / triangle_area(m_vertices[triangle.v2], m_vertices[triangle.v3], m_vertices[triangle.v1]);
+			float beta = triangle_area(m_vertices[triangle.v1], m_vertices[triangle.v3], intersection.hit_point) / triangle_area(m_vertices[triangle.v2], m_vertices[triangle.v3], m_vertices[triangle.v1]);
+			float gamma = triangle_area(m_vertices[triangle.v1], m_vertices[triangle.v2], intersection.hit_point) / triangle_area(m_vertices[triangle.v2], m_vertices[triangle.v3], m_vertices[triangle.v1]);
+			intersection.normal = alpha * m_normal[triangle.normal1] + beta * m_normal[triangle.normal2] + gamma * m_normal[triangle.normal3];
+			intersection.normal = r_n(ray.Get_direction(), intersection.normal);
+			std::cout << "after:" << to_string(normalize(intersection.normal)) << std::endl;
+			std::cout << alpha << "    " << beta << "     " << gamma << "    " << std::endl;
+			#endif
 			result = true;
 			//std::cout << "it reaches here" << std::endl;
 		}

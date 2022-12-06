@@ -4,3 +4,7 @@
 //#define ENABLE_GLOSSY_REFLECTION
 
 //#define ENABLE_SOFT_SHADOW
+
+//#define BUMP_MAPPING
+
+#define PHONG_SHADING

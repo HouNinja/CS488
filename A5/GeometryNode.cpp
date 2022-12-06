@@ -7,6 +7,34 @@
 
 using namespace glm;
 
+
+#include <lodepng/lodepng.h>
+#include <vector>
+ std::vector<unsigned char> image;
+    uint width;
+    uint height;
+	
+    unsigned error = lodepng::decode(image, width, height, "smile.png");
+vec3 bump_mapping(vec3 & normal, Ray ray, float x, float z) {
+   
+	//if (error) std::cout << "decoder error" << error << ":" << lodepng_error_text(error) << std::endl;
+    int pixel_x = (x + 1) / 2 * (width - 1);
+    int pixel_y = (-z + 1) / 2 * (height - 1);
+    unsigned long position = pixel_y * width + pixel_x;
+    position = position * 4;
+	//std::cout << image.size() << " " << position << std::endl;
+    vec3 color = vec3(image[position] / 255.0, image[position + 1] / 255.0, image[position + 2] / 255.0);
+
+    vec3 N = normalize(normal);
+	std::cout << to_string(N) << "    " << to_string(color) << std::endl;
+    vec3 L = normalize(ray.Get_direction());
+    vec3 U = cross(N,L);
+    vec3 V = cross(U, N);
+    normal = N;
+    normal = normal + (1 - color.x) * 0.5 * U + (1 - color.y) * 0.5 * V + (1 - color.z) * 0.5 * N;
+}
+
+
 //---------------------------------------------------------------------------------------
 GeometryNode::GeometryNode(
 	const std::string & name, Primitive *prim, Material *mat, Texture *tex )
@@ -58,6 +86,12 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 		//std::cout << " reach here"<< std::endl
 		intersection.material = m_material;
 		intersection.texture = m_texture;
+		
+				//std::cout << "reach here" << std::endl;
+				float x_difference =intersection.hit_point.x / (m_primitive->x_max - m_primitive->x_min);
+				float y_difference =intersection.hit_point.y /  (m_primitive->y_max - m_primitive->y_min);
+				//bump_mapping(intersection.normal, temp_ray, x_difference, y_difference);
+
 		if ( m_texture != nullptr ) {
 			if ( m_texture->texture_id == 1 ) {
 				CheckerTexture * texture = static_cast<CheckerTexture *>(intersection.texture);
