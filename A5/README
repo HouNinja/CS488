@@ -8,6 +8,8 @@ tested on virtual machine
 
 Extra feature: Mirror Reflection
 
+The documentation is in CS488 report.pdf
+
 10 Objectives:
 1. More Primitives: Cone and Cylinder
 use gr.cone and gr.cylinder in lua script to test;
