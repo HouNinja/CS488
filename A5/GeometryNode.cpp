@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtx/transform.hpp>
-
+#include "Options.hpp"
 using namespace glm;
 
 
@@ -90,7 +90,9 @@ bool GeometryNode::hit(Ray ray, Intersection & intersection, float & ray_t) {
 				//std::cout << "reach here" << std::endl;
 				float x_difference =intersection.hit_point.x / (m_primitive->x_max - m_primitive->x_min);
 				float y_difference =intersection.hit_point.y /  (m_primitive->y_max - m_primitive->y_min);
+				
 				//bump_mapping(intersection.normal, temp_ray, x_difference, y_difference);
+				
 
 		if ( m_texture != nullptr ) {
 			if ( m_texture->texture_id == 1 ) {

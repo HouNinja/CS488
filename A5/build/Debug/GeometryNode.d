@@ -216,7 +216,7 @@ Debug/GeometryNode.o: ../GeometryNode.cpp ../GeometryNode.hpp \
  ../../shared/include/glm/./gtx/simd_mat4.hpp \
  ../../shared/include/glm/./gtx/../detail/intrinsic_matrix.hpp \
  ../../shared/include/glm/./gtx/../detail/intrinsic_matrix.inl \
- ../../shared/include/glm/./gtx/simd_mat4.inl \
+ ../../shared/include/glm/./gtx/simd_mat4.inl ../Options.hpp \
  ../../shared/lodepng/lodepng.h
 
 ../GeometryNode.hpp:
@@ -670,5 +670,7 @@ Debug/GeometryNode.o: ../GeometryNode.cpp ../GeometryNode.hpp \
 ../../shared/include/glm/./gtx/../detail/intrinsic_matrix.inl:
 
 ../../shared/include/glm/./gtx/simd_mat4.inl:
+
+../Options.hpp:
 
 ../../shared/lodepng/lodepng.h:

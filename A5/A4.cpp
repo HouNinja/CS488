@@ -273,7 +273,7 @@ void A4_Render(
  	for (uint y = 0; y < h; ++y) {
 		std::cout << "y: " << y << std::endl;
 		for (uint x = 0; x < w; ++x) {
-			std::cout << "x: " << x << std::endl;
+			//std::cout << "x: " << x << std::endl;
 			const vec3 direction = Top_Left_corner + x * unit_x + y * unit_y;
 			Ray ray = Ray(eye, direction);
 			vec3 color = trace_ray(ray, root, eye, ambient, lights, 2);

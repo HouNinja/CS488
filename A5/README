@@ -8,10 +8,44 @@ tested on virtual machine
 
 Extra feature: Mirror Reflection
 
+10 Objectives:
+1. More Primitives: Cone and Cylinder
+use gr.cone and gr.cylinder in lua script to test;
+test1.lua
+2. Refraction:
+Refraction is by defaut enabled, how ever , the coefficient of refraction is defined in material,
+so if there's no refraction, then the coefficient is 0. Same for reflection
+test2.lua
+3. Anti-aliasing
+Go to options.hpp, comment out or comment in ENABLE_ANTI_ALIASING, rebuild
+test1.lua
+4. Soft shadows
+Go to options.hpp, comment out or comment in ENABLE_SOFT_SHADOW, rebuild
+test3.lua
+5. Glossy_reflection
+Go to options.hpp, comment out or comment in ENABLE_GLOSSY_REFLECTION, rebuild
+test3.lua
+6. Phong_shading on triable meshes:
+This needs to input a .obj file with vertex normals, if yes, comment out or comment in ENABLE_PHONG_SHADING, rebuild
+test6.lua(when comment out ENABLE_PHONG_SHADING)
+test7.lua(when define ENABLE_PHONG_SHADING)
+7. 8.3D texture and perlin noise:
+test5.lua
+9. Bump Mapping
+To test this objective, go to GeometryNode.cpp, line 94, remove // to include that line of code.
+Now, my code can just do bump mapping to image/smile.png  
+
+test4.lua
+10. final scene
+scene.lua
+
 Manual:
-1. All the final images are in Assets file,
+1. All the final images are in Image file,
 
 2. I use ifdef to switch rendering mode: If testers would like to see bounding volume, please go to Mesh.ssh
 and comment out the #define line
 
-3. My sample scene is simple, but all 10 objectives can be tested.
+Further Improvement:
+
+1.Adding concurrency. My Ray tracer seems to take forever when I do tests on meshes and render my final scene.
+Any efficiency improvement could be my savior.
